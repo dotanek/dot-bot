@@ -22,17 +22,16 @@ export class Chat {
       }
     }
 
-    this.twitchClient.on(ChatEvent.MESSAGE, this.handleMessage.bind(this))
+    this.twitchClient.on(ChatEvent.MESSAGE, this.handleMessage.bind(this));
 
     return true;
   }
 
-  private handleMessage(
-    channel: string,
-    userstate: ChatUserstate,
-    message: string,
-    self: boolean,
-  ): void {
+  private handleMessage() /* channel: string,
+     userstate: ChatUserstate,
+     message: string,
+     self: boolean,*/
+  : void {
     // not implemented
   }
 

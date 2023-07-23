@@ -1,8 +1,6 @@
 import { IModule } from '../system-definitions/interface/module.interface';
 import { ChatModule } from '../modules/chat/chat.module';
 import { Config } from '../config/config';
-import * as events from 'events';
-import { Exception } from '../system-definitions/base/exception';
 import { ApplicationInitException } from './exception/application-init.exception';
 
 export class Application {
