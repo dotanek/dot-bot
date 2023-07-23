@@ -1,28 +1,43 @@
 import { IModule } from '../system-definitions/interface/module.interface';
 import { ChatModule } from '../modules/chat/chat.module';
-import {Config} from "../config/config";
+import { Config } from '../config/config';
+import { ApplicationInitException } from './exception/application-init.exception';
 
 export class Application {
-  private readonly modules: IModule[] = [];
+  private constructor(private readonly modules: IModule[]) {}
 
-  running = true;
+  async initialize() {
+    console.log(`Starting application.`);
+    console.log(`Initializing modules...`);
 
-  constructor() {
-    console.log('Application starting...')
+    let someInitialized = false;
 
-    const config = new Config();
+    await Promise.all(
+      this.modules.map(async (module) => {
+        const initResult = await module.initialize();
 
-    this.modules = [
-      new ChatModule(config),
-    ];
+        console.log(
+          `${module.name}... [${initResult ? 'success' : 'failure'}]`,
+        );
 
-    const initInterval = setInterval(() => {
-      if (this.modules.every((module) => module.initialized)) {
-        clearInterval(initInterval);
+        if (initResult) {
+          someInitialized = true;
+        }
 
-        console.log('Application started successfully.')
-      }
-    }, 1000);
+        return initResult;
+      }),
+    );
+
+    if (!someInitialized) {
+      throw new ApplicationInitException('no modules initialized successfully');
+    }
+
+    console.log(`Application started.`);
   }
 
+  static create(): Application {
+    const config = new Config();
+
+    return new Application([ChatModule.create(config)]);
+  }
 }
