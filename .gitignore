@@ -1,0 +1,11 @@
+# workspace
+.idea
+
+# distribution
+dist
+
+# node
+node_modules
+
+# environment
+.env
