@@ -1,36 +1,39 @@
-import {ChatUserstate, Client as TwitchClient} from 'tmi.js';
+import { ChatUserstate, Client as TwitchClient } from 'tmi.js';
 import { Config } from '../../../config/config';
 import { ConfigKey } from '../../../config/enum/config-key.enum';
 import { ChatEvent } from './enum/chat-event.enum';
 import { ChatException } from './exception/chat.exception';
 import { UnableToConnectChatException } from './exception/unable-to-connect.chat-exception';
+import { Exception } from '../../../system-definitions/base/exception';
 
 export class Chat {
-  private _initialized = false;
+  constructor(private readonly twitchClient: TwitchClient) {}
 
-  get initialized(): boolean {
-    return this._initialized;
-  }
-
-  constructor(private readonly twitchClient: TwitchClient) {
-    this.initialize();
-  }
-
-  private initialize(): void {
-    this.twitchClient
-      .connect()
-      .then(() => {
-        this.twitchClient.on(ChatEvent.MESSAGE, this.handleMessage.bind(this));
-
-        this._initialized = true;
-      })
-      .catch((error: string) => {
+  async initialize(): Promise<boolean> {
+    try {
+      await this.twitchClient.connect();
+    } catch (error: unknown) {
+      if (typeof error === 'string') {
         this.catchException(new UnableToConnectChatException(error));
-      });
+
+        return false;
+      } else {
+        throw error;
+      }
+    }
+
+    this.twitchClient.on(ChatEvent.MESSAGE, this.handleMessage.bind(this))
+
+    return true;
   }
 
-  private handleMessage(channel: string, userstate: ChatUserstate, message: string, self: boolean): void {
-    console.log(`[${userstate.username}]: ${message}`)
+  private handleMessage(
+    channel: string,
+    userstate: ChatUserstate,
+    message: string,
+    self: boolean,
+  ): void {
+    // not implemented
   }
 
   private catchException(exception: ChatException): void {
@@ -49,5 +52,4 @@ export class Chat {
 
     return new Chat(twitchClient);
   }
-
 }

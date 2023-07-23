@@ -28,3 +28,11 @@ or for automatic redeploy after each code change
 ```bash
 npm run start:dev:nodemon
 ```
+
+
+### ToDo
+Last edit: 23/07/2023
+-  Message handling <sub>[ChatModule]</sub>
+-  Commands recognition handling <sub>[ChatModule]</sub>
+- Commands module
+- Application logs via dedicated logger class

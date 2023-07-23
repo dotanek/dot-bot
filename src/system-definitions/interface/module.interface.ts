@@ -1,3 +1,7 @@
+import { ModuleName } from '../../application/enum/module-name.enum';
+
 export interface IModule {
-  get initialized(): boolean;
+  readonly name: ModuleName;
+
+  initialize(): Promise<boolean>;
 }
