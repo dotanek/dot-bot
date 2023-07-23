@@ -1,10 +1,9 @@
-import { ChatUserstate, Client as TwitchClient } from 'tmi.js';
+import { Client as TwitchClient } from 'tmi.js';
 import { Config } from '../../../config/config';
 import { ConfigKey } from '../../../config/enum/config-key.enum';
 import { ChatEvent } from './enum/chat-event.enum';
 import { ChatException } from './exception/chat.exception';
 import { UnableToConnectChatException } from './exception/unable-to-connect.chat-exception';
-import { Exception } from '../../../system-definitions/base/exception';
 
 export class Chat {
   constructor(private readonly twitchClient: TwitchClient) {}
