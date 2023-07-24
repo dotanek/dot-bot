@@ -4,7 +4,7 @@ Node/typescript application providing mostly entertainment features across diffe
 
 #### Current features (23/07/2023):
 
- - Twitch chat commands
+ - Twitch chat read & write
 
 ## Setup
 
