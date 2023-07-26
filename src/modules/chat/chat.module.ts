@@ -4,7 +4,6 @@ import { ChatService } from './core/chat.service';
 import { Config } from '../../config/config';
 import { ModuleName } from '../../application/enum/module-name.enum';
 import { DependencyProvider } from '../../application/provider/dependency.provider';
-import { config } from 'dotenv';
 
 export class ChatModule implements IModule {
   readonly name = ModuleName.CHAT;

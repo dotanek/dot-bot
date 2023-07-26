@@ -6,7 +6,6 @@ import { ChatException } from './exception/chat.exception';
 import { UnableToConnectChatException } from './exception/unable-to-connect.chat-exception';
 import { DependencyProvider } from '../../../application/provider/dependency.provider';
 import { ModuleName } from '../../../application/enum/module-name.enum';
-import { CommandsGateway } from '../external/gateway/commandsGateway';
 import { CommandsFacade } from '../../command/external/commands.facade';
 import { ChatMessage } from './value-object/chat-message';
 
