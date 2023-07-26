@@ -1,24 +1,25 @@
 import { IModule } from '../../system-definitions/interface/module.interface';
 import { ChatFacade } from './external/chat.facade';
-import { Chat } from './core/chat';
+import { ChatService } from './core/chat.service';
 import { Config } from '../../config/config';
-import {ModuleName} from "../../application/enum/module-name.enum";
+import { ModuleName } from '../../application/enum/module-name.enum';
+import { DependencyProvider } from '../../application/provider/dependency.provider';
+import { config } from 'dotenv';
 
 export class ChatModule implements IModule {
   readonly name = ModuleName.CHAT;
-  constructor(
-    readonly facade: ChatFacade,
-    private readonly chat: Chat,
-  ) {}
 
-  initialize(): Promise<boolean> {
-    return this.chat.initialize();
+  private readonly service: ChatService;
+  readonly facade: ChatFacade;
+
+  constructor(config: Config, dependencyProvider: DependencyProvider) {
+    this.service = new ChatService(config, dependencyProvider);
+    this.facade = new ChatFacade(this.service);
+
+    dependencyProvider.injectFacade(this.name, this.facade);
   }
 
-  static create(config: Config): ChatModule {
-    const chat = Chat.create(config);
-    const facade = new ChatFacade();
-
-    return new ChatModule(facade, chat);
+  initialize(): Promise<boolean> {
+    return this.service.initialize();
   }
 }

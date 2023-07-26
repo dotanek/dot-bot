@@ -5,6 +5,9 @@ import { configDotenv } from 'dotenv';
 export class Config {
   readonly twitch = {
     channels: ['dotanek'],
+    commands: {
+      prefix: '!',
+    },
   };
 
   constructor() {
