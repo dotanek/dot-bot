@@ -3,7 +3,6 @@
 Node/typescript application providing mostly entertainment features across different platforms I operate at.
 
 #### Current features:
-
  - Basic twitch chat commands
 
 ## Setup
