@@ -2,9 +2,8 @@
 
 Node/typescript application providing mostly entertainment features across different platforms I operate at.
 
-#### Current features (23/07/2023):
-
- - Twitch chat read & write
+#### Current features:
+ - Basic twitch chat commands
 
 ## Setup
 
@@ -31,8 +30,6 @@ npm run start:dev:nodemon
 
 
 ### ToDo
-Last edit: 23/07/2023
--  Message handling <sub>[ChatModule]</sub>
--  Commands recognition handling <sub>[ChatModule]</sub>
-- Commands module
+- Docker environment config
 - Application logs via dedicated logger class
+- Advanced commands <sub>(ChatModule)</sub>
