@@ -4,10 +4,6 @@ import { ConfigKey } from '../../../config/enum/config-key.enum';
 import { ChatEvent } from './enum/chat-event.enum';
 import { ChatException } from './exception/chat.exception';
 import { UnableToConnectChatException } from './exception/unable-to-connect.chat-exception';
-import { DependencyProvider } from '../../../application/provider/dependency.provider';
-import { ModuleName } from '../../../application/enum/module-name.enum';
-import { CommandsFacade } from '../../command/external/commands.facade';
-import { ChatMessage } from './value-object/chat-message';
 import { CommandsGateway } from '../external/gateway/commands.gateway';
 import { ChatMessageFactory } from './factory/chat-message.factory';
 

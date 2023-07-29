@@ -1,5 +1,3 @@
-import { MessageSanitizationUtil } from '../util/message-sanitization.util';
-
 export class ChatMessage {
   constructor(
     readonly content: string,
