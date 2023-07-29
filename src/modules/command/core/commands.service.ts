@@ -12,7 +12,7 @@ export class CommandsService {
       return command.execute();
     } catch (exception: unknown) {
       if (exception instanceof CommandNotFoundCommandsException) {
-        return 'unrecognized command'
+        return 'unrecognized command';
       } else {
         throw exception;
       }

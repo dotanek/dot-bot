@@ -4,6 +4,8 @@ import { ChatService } from './core/chat.service';
 import { Config } from '../../config/config';
 import { ModuleName } from '../../application/enum/module-name.enum';
 import { DependencyProvider } from '../../application/provider/dependency.provider';
+import { CommandsGateway } from './external/gateway/commands.gateway';
+import { ChatMessageFactory } from './core/factory/chat-message.factory';
 
 export class ChatModule implements IModule {
   readonly name = ModuleName.CHAT;
@@ -12,7 +14,11 @@ export class ChatModule implements IModule {
   readonly facade: ChatFacade;
 
   constructor(config: Config, dependencyProvider: DependencyProvider) {
-    this.service = new ChatService(config, dependencyProvider);
+    const commandsGateway = new CommandsGateway(dependencyProvider);
+
+    const chatMessageFactory = new ChatMessageFactory(config);
+
+    this.service = new ChatService(config, commandsGateway, chatMessageFactory);
     this.facade = new ChatFacade(this.service);
 
     dependencyProvider.injectFacade(this.name, this.facade);

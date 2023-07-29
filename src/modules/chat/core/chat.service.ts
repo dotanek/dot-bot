@@ -8,45 +8,25 @@ import { DependencyProvider } from '../../../application/provider/dependency.pro
 import { ModuleName } from '../../../application/enum/module-name.enum';
 import { CommandsFacade } from '../../command/external/commands.facade';
 import { ChatMessage } from './value-object/chat-message';
+import { CommandsGateway } from '../external/gateway/commands.gateway';
+import { ChatMessageFactory } from './factory/chat-message.factory';
 
 export class ChatService {
   private readonly twitchClient: TwitchClient;
 
   constructor(
     private readonly config: Config,
-    private readonly dependencyProvider: DependencyProvider,
+    private readonly commandsGateway: CommandsGateway,
+    private readonly chatMessageFactory: ChatMessageFactory,
   ) {
     this.twitchClient = this.createTwitchClient(config);
   }
 
-  async initialize(): Promise<boolean> {
-    try {
-      await this.twitchClient.connect();
-    } catch (error: unknown) {
-      if (typeof error === 'string') {
-        this.catchException(new UnableToConnectChatException(error));
+  private handleMessage(content: string, channel: string): void {
+    const message = this.chatMessageFactory.getFrom(content, channel);
 
-        return false;
-      } else {
-        throw error;
-      }
-    }
-
-    this.twitchClient.on(ChatEvent.MESSAGE, this.handleMessage.bind(this));
-
-    return true;
-  }
-
-  private handleMessage(
-    channel: string,
-    userstate: ChatUserstate,
-    message: string,
-    self: boolean,
-  ): void {
-    if (message.startsWith(this.config.twitch.commands.prefix)) {
-      const result = this.dependencyProvider
-        .getFacadeFor<CommandsFacade>(ModuleName.COMMANDS)
-        .runCommandFor(new ChatMessage(message));
+    if (message.isCommand) {
+      const result = this.commandsGateway.runCommandFor(message);
 
       this.twitchClient.say(channel, result);
     }
@@ -65,5 +45,31 @@ export class ChatService {
       },
       channels: config.twitch.channels,
     });
+  }
+
+  async initialize(): Promise<boolean> {
+    try {
+      await this.twitchClient.connect();
+    } catch (error: unknown) {
+      if (typeof error === 'string') {
+        this.catchException(new UnableToConnectChatException(error));
+
+        return false;
+      } else {
+        throw error;
+      }
+    }
+
+    this.twitchClient.on(
+      ChatEvent.MESSAGE,
+      (
+        channel: string,
+        userstate: ChatUserstate,
+        message: string,
+        self: boolean,
+      ) => this.handleMessage(message, channel),
+    );
+
+    return true;
   }
 }
