@@ -1,0 +1,36 @@
+services:
+  application:
+    build:
+      context: .
+    environment:
+      - NODE_ENV=production
+    env_file:
+      - .env
+    ports:
+      - 5000:5000
+
+  #     depends_on:
+  #       db:
+  #         condition: service_healthy
+  database:
+    image: postgres
+    restart: always
+    user: postgres
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=dot-bot
+      - POSTGRES_DB=dot-bot-db
+      - PGUSER=dot-bot
+      - PGDATABASE=dot-bot-db
+    env_file:
+        - .env
+    expose:
+      - 5432
+    healthcheck:
+      test: [ "CMD", "pg_isready" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+volumes:
+  db-data:

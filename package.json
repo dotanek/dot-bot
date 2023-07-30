@@ -4,6 +4,7 @@
   "description": "",
   "main": "main.ts",
   "scripts": {
+    "build": "tsc --build",
     "start:dev": "ts-node src/main.ts",
     "start:dev:nodemon": "nodemon src/main.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -12,6 +13,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/node": "^20.4.5",
     "@types/tmi.js": "^1.8.3",
     "nodemon": "^3.0.1",
     "prettier": "^3.0.0",
