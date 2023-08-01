@@ -1,0 +1,39 @@
+services:
+  application:
+    build:
+      context: .
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=production
+      - TWITCH_USERNAME=${TWITCH_USERNAME}
+      - TWITCH_TOKEN=${TWITCH_TOKEN}
+    ports:
+      - 5000:5000
+
+  #     depends_on:
+  #       db:
+  #         condition: service_healthy
+  database:
+    image: postgres
+    restart: always
+    user: postgres
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    env_file:
+        - .env
+    environment:
+        - POSTGRES_USER=${DATABASE_USER}
+        - POSTGRES_DB=${DATABASE_NAME}
+        - PGUSER=${DATABASE_USER}
+        - PGDATABASE=${DATABASE_NAME}
+        - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+    expose:
+      - 5432
+    healthcheck:
+      test: [ "CMD", "pg_isready" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+volumes:
+  db-data:
