@@ -7,6 +7,7 @@
     "build": "tsc --build",
     "start:dev": "ts-node src/main.ts",
     "start:dev:nodemon": "nodemon src/main.ts",
+    "lint": "eslint .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -15,6 +16,9 @@
   "devDependencies": {
     "@types/node": "^20.4.5",
     "@types/tmi.js": "^1.8.3",
+    "@typescript-eslint/eslint-plugin": "^6.2.1",
+    "@typescript-eslint/parser": "^6.2.1",
+    "eslint": "^8.46.0",
     "nodemon": "^3.0.1",
     "prettier": "^3.0.0",
     "ts-node": "^10.9.1",
