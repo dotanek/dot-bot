@@ -5,6 +5,7 @@
   "main": "main.ts",
   "scripts": {
     "build": "tsc --build",
+    "start:prod": "tsc --build && node dist/main.js",
     "start:dev": "ts-node src/main.ts",
     "start:dev:nodemon": "nodemon src/main.ts",
     "lint": "eslint .",
