@@ -1,7 +1,6 @@
 import { ConfigKey } from './enum/config-key.enum';
-import { ConfigException } from './exception/config.exception';
 import { configDotenv } from 'dotenv';
-import {MissingEvConfigException} from "./exception/missing-ev.config-exception";
+import { MissingEvConfigException } from './exception/missing-ev.config-exception';
 
 export class Config {
   readonly twitch = {

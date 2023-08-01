@@ -2,10 +2,12 @@ services:
   application:
     build:
       context: .
-    environment:
-      - NODE_ENV=production
     env_file:
       - .env
+    environment:
+      - NODE_ENV=production
+      - TWITCH_USERNAME=${TWITCH_USERNAME}
+      - TWITCH_TOKEN=${TWITCH_TOKEN}
     ports:
       - 5000:5000
 
@@ -18,13 +20,14 @@ services:
     user: postgres
     volumes:
       - db-data:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_USER=dot-bot
-      - POSTGRES_DB=dot-bot-db
-      - PGUSER=dot-bot
-      - PGDATABASE=dot-bot-db
     env_file:
         - .env
+    environment:
+        - POSTGRES_USER=${DATABASE_USER}
+        - POSTGRES_DB=${DATABASE_NAME}
+        - PGUSER=${DATABASE_USER}
+        - PGDATABASE=${DATABASE_NAME}
+        - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
     expose:
       - 5432
     healthcheck:

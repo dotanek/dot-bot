@@ -10,6 +10,7 @@ Node/typescript application providing mostly entertainment features across diffe
 Requirements
 - node v18.17.0
 - npm v9.6.7
+- docker 24.0.2
 
 Install all dependencies
 
@@ -28,8 +29,11 @@ or for automatic redeploy after each code change
 npm run start:dev:nodemon
 ```
 
+Set up database (requires docker) (optional for now)
+```bash
+docker-compose up -d database
+```
 
 ### ToDo
-- Docker environment config
 - Application logs via dedicated logger class
 - Advanced commands <sub>(ChatModule)</sub>
