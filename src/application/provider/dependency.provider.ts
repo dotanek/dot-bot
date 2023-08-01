@@ -2,7 +2,7 @@ import { ModuleName } from '../enum/module-name.enum';
 import { DependencyProvisionException } from '../exception/dependency-provision.exception';
 
 export class DependencyProvider {
-  private readonly facades: Record<ModuleName, any> = {
+  private readonly facades: Record<ModuleName, unknown> = {
     ChatModule: null,
     CommandsModule: null,
   };

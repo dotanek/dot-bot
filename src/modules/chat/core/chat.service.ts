@@ -56,6 +56,7 @@ export class ChatService {
       }
     }
 
+    /* eslint-disable */
     this.twitchClient.on(
       ChatEvent.MESSAGE,
       (
@@ -65,6 +66,7 @@ export class ChatService {
         self: boolean,
       ) => this.handleMessage(message, channel),
     );
+    /* eslint-enable */
 
     return true;
   }
