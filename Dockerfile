@@ -24,8 +24,5 @@ RUN npm install --include=dev
 RUN npm install -g typescript
 RUN tsc --build
 
-# Expose the port that the application listens on.
-EXPOSE 5000
-
 # Run the application.
 CMD ["node", "dist/main.js"]

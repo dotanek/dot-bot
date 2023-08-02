@@ -4,6 +4,7 @@
   "description": "",
   "main": "main.ts",
   "scripts": {
+    "start": "tsc --build && node dist/main.js",
     "build": "tsc --build",
     "start:dev": "ts-node src/main.ts",
     "start:dev:nodemon": "nodemon src/main.ts",
