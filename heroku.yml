@@ -1,7 +1,0 @@
-build:
-  docker:
-    worker: Dockerfile
-  config:
-    NODE_ENV: production
-run:
-  worker: node dist/main.js
