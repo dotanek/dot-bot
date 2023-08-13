@@ -1,4 +1,3 @@
-import { Config } from '../../config/config';
 import { ChatCommandService } from './core/chat-command.service';
 import { ChatCommandFactory } from './core/factory/chatCommandFactory';
 import { ISubModule } from '../../system-definitions/interface/sub-module.interface';

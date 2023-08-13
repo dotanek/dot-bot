@@ -1,7 +1,6 @@
 import { IModule } from '../system-definitions/interface/module.interface';
 import { Config } from '../config/config';
 import { ApplicationInitException } from './exception/application-init.exception';
-import { DependencyProvider } from './provider/dependency.provider';
 import { TwitchModule } from '../modules/twitch/twitch.module';
 
 export class Application {
