@@ -3,8 +3,7 @@ import { DependencyProvisionException } from '../exception/dependency-provision.
 
 export class DependencyProvider {
   private readonly facades: Record<ModuleName, unknown> = {
-    ChatModule: null,
-    CommandsModule: null,
+    TwitchModule: null,
   };
 
   injectFacade(module: ModuleName, facade: unknown): void {

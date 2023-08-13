@@ -1,4 +1,3 @@
 export enum ModuleName {
-  CHAT = 'ChatModule',
-  COMMANDS = 'CommandsModule'
+  TWITCH = 'TwitchModule',
 }

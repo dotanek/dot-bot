@@ -1,9 +1,8 @@
 import { IModule } from '../system-definitions/interface/module.interface';
-import { ChatModule } from '../modules/chat/chat.module';
 import { Config } from '../config/config';
 import { ApplicationInitException } from './exception/application-init.exception';
-import { CommandsModule } from '../modules/command/commands.module';
 import { DependencyProvider } from './provider/dependency.provider';
+import { TwitchModule } from '../modules/twitch/twitch.module';
 
 export class Application {
   private constructor(private readonly modules: IModule[]) {}
@@ -43,9 +42,6 @@ export class Application {
     const config = new Config();
     const dependencyProvider = new DependencyProvider();
 
-    return new Application([
-      new ChatModule(config, dependencyProvider),
-      new CommandsModule(config, dependencyProvider),
-    ]);
+    return new Application([new TwitchModule(config, dependencyProvider)]);
   }
 }
