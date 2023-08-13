@@ -1,5 +1,5 @@
-import {DatabaseType, DataSource} from 'typeorm';
-import {Config} from '../config/config';
+import { DataSource } from 'typeorm';
+import { Config } from '../config/config';
 
 export class Database {
   private readonly dataSource: DataSource;

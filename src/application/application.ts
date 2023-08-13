@@ -40,8 +40,7 @@ export class Application {
 
   static create(): Application {
     const config = new Config();
-    const dependencyProvider = new DependencyProvider();
 
-    return new Application([new TwitchModule(config, dependencyProvider)]);
+    return new Application([new TwitchModule(config)]);
   }
 }

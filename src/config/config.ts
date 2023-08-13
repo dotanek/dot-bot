@@ -1,7 +1,6 @@
 import { ConfigKey } from './enum/config-key.enum';
 import { configDotenv } from 'dotenv';
 import { MissingEvConfigException } from './exception/missing-ev.config-exception';
-import { DatabaseType } from 'typeorm';
 import { DataSourceOptions } from 'typeorm/data-source/DataSourceOptions';
 
 export class Config {

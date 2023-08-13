@@ -11,8 +11,8 @@ export class TwitchModule implements IModule {
 
   private readonly modules: ISubModule[] = [];
 
-  constructor(config: Config, dependencyProvider: DependencyProvider) {
-    const commandModule = new ChatCommandSubModule(config);
+  constructor(config: Config) {
+    const commandModule = new ChatCommandSubModule();
     const chatModule = new ChatSubModule(config, commandModule.service);
     this.modules = [commandModule, chatModule];
   }
