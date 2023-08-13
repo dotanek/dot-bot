@@ -4,7 +4,7 @@ import { Command } from '../commands/command.base';
 import { CommandNotFoundCommandsException } from '../exception/command-not-found.commands-exception';
 import { TestCommand, GuguCommand } from '../commands';
 
-export class CommandFactory {
+export class ChatCommandFactory {
   private commands: Map<CommandName, Command> = new Map<CommandName, Command>(
     [new TestCommand(), new GuguCommand()].map((command) => [
       command.name,
@@ -25,7 +25,7 @@ export class CommandFactory {
     return this.commands.get(commandName)!;
   }
 
-  static create(): CommandFactory {
-    return new CommandFactory();
+  static create(): ChatCommandFactory {
+    return new ChatCommandFactory();
   }
 }
