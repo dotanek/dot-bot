@@ -1,11 +1,12 @@
-import { ChatUserstate, Client as TwitchClient, Userstate } from 'tmi.js';
+import { ChatUserstate, Client } from 'tmi.js';
 import { Config } from '../../../config/config';
 import { ConfigKey } from '../../../config/enum/config-key.enum';
 import { ChatEvent } from './enum/chat-event.enum';
 import { ChatException } from './exception/chat.exception';
 import { UnableToConnectChatException } from './exception/unable-to-connect.chat-exception';
-import { ChatMessageFactory } from './factory/chat-message.factory';
 import { ChatCommandService } from '../../command/core/chat-command.service';
+import { TwitchClient } from './types/twitch-client';
+import {ChatTarget} from "./value-object/chat-target";
 
 export class ChatService {
   private readonly twitchClient: TwitchClient;
@@ -13,22 +14,19 @@ export class ChatService {
   constructor(
     private readonly config: Config,
     private readonly chatCommandService: ChatCommandService,
-    private readonly chatMessageFactory: ChatMessageFactory,
   ) {
     this.twitchClient = this.createTwitchClient(config);
   }
 
   private handleMessage(
     content: string,
-    userstate: Userstate,
     channel: string,
+    userstate: ChatUserstate,
   ): void {
-    const message = this.chatMessageFactory.getFrom(content, channel);
+    const chatTarget = ChatTarget.create(this.twitchClient, this.config, content, channel, userstate);
 
-    if (message.isCommand) {
-      const result = this.chatCommandService.runCommandFor(message);
-
-      this.twitchClient.say(channel, result.getValueOrThrow());
+    if (chatTarget.isMessageCommand()) {
+      this.chatCommandService.runCommandFor(chatTarget);
     }
   }
 
@@ -37,7 +35,7 @@ export class ChatService {
   }
 
   private createTwitchClient(config: Config): TwitchClient {
-    return new TwitchClient({
+    return new Client({
       options: { debug: false },
       identity: {
         username: config.getEnvironmental<string>(ConfigKey.TWITCH_USERNAME),
@@ -68,7 +66,7 @@ export class ChatService {
         userstate: ChatUserstate,
         message: string,
         self: boolean,
-      ) => this.handleMessage(message, userstate, channel),
+      ) => this.handleMessage(message, channel, userstate),
     );
     /* eslint-enable */
 

@@ -1,19 +1,18 @@
-import { ChatMessageDto } from '../external/dto/chat-message.dto';
 import { ChatCommandFactory } from './factory/chatCommandFactory';
 import { CommandNotFoundCommandsException } from './exception/command-not-found.commands-exception';
-import {CommandResult} from "./value-objects/command-result";
+import { ChatTarget } from '../../chat/core/value-object/chat-target';
 
 export class ChatCommandService {
   constructor(private readonly commandFactory: ChatCommandFactory) {}
 
-  runCommandFor(message: ChatMessageDto): CommandResult {
+  runCommandFor(chatTarget: ChatTarget): void {
     try {
-      const command = this.commandFactory.getFor(message);
+      const command = this.commandFactory.getFor(chatTarget);
 
-      return command.execute();
+      command.execute(chatTarget);
     } catch (exception: unknown) {
       if (exception instanceof CommandNotFoundCommandsException) {
-        return CommandResult.createFailure('command not found');
+        console.log(exception);
       } else {
         throw exception;
       }

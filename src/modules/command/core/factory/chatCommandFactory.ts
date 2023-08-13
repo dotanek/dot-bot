@@ -1,19 +1,20 @@
-import { ChatMessageDto } from '../../external/dto/chat-message.dto';
 import { CommandName } from '../enum/command-name.enum';
 import { Command } from '../commands/command.base';
 import { CommandNotFoundCommandsException } from '../exception/command-not-found.commands-exception';
-import { TestCommand, GuguCommand } from '../commands';
+import { TestCommand, GuguCommand, LurkCommand } from '../commands';
+import { ChatTarget } from '../../../chat/core/value-object/chat-target';
 
 export class ChatCommandFactory {
   private commands: Map<CommandName, Command> = new Map<CommandName, Command>(
-    [new TestCommand(), new GuguCommand()].map((command) => [
+    [new TestCommand(), new GuguCommand(), new LurkCommand()].map((command) => [
       command.name,
       command,
     ]),
   );
 
-  getFor(message: ChatMessageDto): Command {
-    const commandName = message.content
+  getFor(target: ChatTarget): Command {
+    const commandName = target
+      .getMessageContent()
       .slice(1)
       .split(' ')
       .shift()! as CommandName;

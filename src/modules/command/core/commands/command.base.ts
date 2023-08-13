@@ -1,12 +1,8 @@
 import { CommandName } from '../enum/command-name.enum';
-import { CommandResult } from '../value-objects/command-result';
+import {ChatTarget} from "../../../chat/core/value-object/chat-target";
 
 export abstract class Command {
-  abstract execute(): CommandResult;
+  abstract execute(chatTarget: ChatTarget): void;
 
   abstract readonly name: CommandName;
-
-  protected toFailure(reason: string): CommandResult {
-    return CommandResult.createFailure(`error: ${reason}`);
-  }
 }

@@ -1,10 +1,11 @@
 import { Command } from './command.base';
-import {CommandName} from "../enum/command-name.enum";
-import {CommandResult} from "../value-objects/command-result";
+import { CommandName } from '../enum/command-name.enum';
+import {ChatTarget} from "../../../chat/core/value-object/chat-target";
 
 export class TestCommand extends Command {
   name = CommandName.TEST;
-  execute(): CommandResult {
-    return CommandResult.createSuccess('Hello world!')
+
+  execute(chatTarget: ChatTarget): void {
+    chatTarget.send('Hello world!')
   }
 }
