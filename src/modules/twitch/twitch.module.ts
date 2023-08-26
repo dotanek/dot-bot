@@ -1,24 +1,17 @@
 import { IModule } from '../../system-definitions/interface/module.interface';
 import { ModuleName } from '../../application/enum/module-name.enum';
-import { ISubModule } from '../../system-definitions/interface/sub-module.interface';
-import { Config } from '../../config/config';
-import { ChatCommandSubModule } from '../command/chat-command-sub.module';
-import { ChatSubModule } from '../chat/chat.sub-module';
+import { TwitchService } from './services/twitch.service';
 
 export class TwitchModule implements IModule {
   readonly name = ModuleName.TWITCH;
 
-  private readonly modules: ISubModule[] = [];
+  private readonly service: TwitchService;
 
-  constructor(config: Config) {
-    const commandModule = new ChatCommandSubModule();
-    const chatModule = new ChatSubModule(config, commandModule.service);
-    this.modules = [commandModule, chatModule];
+  constructor() {
+    this.service = new TwitchService();
   }
 
   async initialize(): Promise<boolean> {
-    return (
-      await Promise.all(this.modules.map((module) => module.initialize()))
-    ).every((initResult) => initResult);
+    return this.service.initialize();
   }
 }

@@ -28,8 +28,8 @@ services:
         - PGUSER=${DATABASE_USER}
         - PGDATABASE=${DATABASE_NAME}
         - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
-    expose:
-      - 5432
+    ports:
+      - 5432:5432
     healthcheck:
       test: [ "CMD", "pg_isready" ]
       interval: 10s
