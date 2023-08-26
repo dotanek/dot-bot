@@ -4,6 +4,7 @@ Node/typescript application providing mostly entertainment features across diffe
 
 #### Current features:
  - Basic twitch chat commands
+ - Database access
 
 ## Setup
 
@@ -36,4 +37,4 @@ docker-compose up -d database
 
 ### ToDo
 - Application logs via dedicated logger class
-- Advanced commands <sub>(ChatModule)</sub>
+- Refactor dependency injection

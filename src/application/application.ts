@@ -1,5 +1,4 @@
 import { IModule } from '../system-definitions/interface/module.interface';
-import { Config } from '../config/config';
 import { ApplicationInitException } from './exception/application-init.exception';
 import { TwitchModule } from '../modules/twitch/twitch.module';
 
@@ -38,8 +37,6 @@ export class Application {
   }
 
   static create(): Application {
-    const config = new Config();
-
-    return new Application([new TwitchModule(config)]);
+    return new Application([new TwitchModule()]);
   }
 }

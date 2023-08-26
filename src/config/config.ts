@@ -1,13 +1,18 @@
 import { ConfigKey } from './enum/config-key.enum';
 import { configDotenv } from 'dotenv';
 import { MissingEvConfigException } from './exception/missing-ev.config-exception';
-import { DataSourceOptions } from 'typeorm/data-source/DataSourceOptions';
 
 export class Config {
-  readonly twitch;
-  readonly database: DataSourceOptions;
+  private static instance: Config;
 
-  constructor() {
+  static getInstance(): Config {
+    return this.instance || (this.instance = new this());
+  }
+
+  readonly twitch;
+  readonly database;
+
+  private constructor() {
     configDotenv();
 
     this.twitch = {
@@ -20,9 +25,8 @@ export class Config {
     };
 
     this.database = {
-      type: 'postgres',
-      host: 'localhost',
-      port: 5432,
+      port: this.getEnvironmental<number>(ConfigKey.DATABASE_PORT),
+      host: this.getEnvironmental<string>(ConfigKey.DATABASE_HOST),
       username: this.getEnvironmental<string>(ConfigKey.DATABASE_USER),
       password: this.getEnvironmental<string>(ConfigKey.DATABASE_PASSWORD),
       database: this.getEnvironmental<string>(ConfigKey.DATABASE_NAME),
@@ -41,3 +45,5 @@ export class Config {
     return value as T;
   }
 }
+
+export default Config.getInstance();
