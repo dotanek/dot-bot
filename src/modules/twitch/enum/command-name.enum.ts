@@ -4,4 +4,6 @@ export enum CommandName {
   LURK = 'lurk',
   FROG = 'frog',
   QUOTES = 'quotes',
+  GAMBA = 'gamba',
+  POINTS = 'points'
 }
