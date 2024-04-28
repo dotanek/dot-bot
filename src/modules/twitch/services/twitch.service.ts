@@ -7,18 +7,21 @@ import { TwitchEvent } from '../enum/twitch-event.enum';
 import { CommandProvider } from '../provider/command.provider';
 import { ChatMessage } from '../value-objects/chat-message';
 import { TwitchContext } from '../value-objects/twitch-context';
+import { UserInitService } from './user-init.service';
 
 export class TwitchService {
   private readonly twitchClient: TwitchClient;
   private readonly commandProvider: CommandProvider;
+  private readonly userInitService: UserInitService;
 
   constructor() {
     this.twitchClient = this.createTwitchClient();
-    this.commandProvider = new CommandProvider(this.twitchClient);
+    this.userInitService = new UserInitService();
+    this.commandProvider = new CommandProvider(this.twitchClient, this.userInitService);
   }
 
   async initialize(): Promise<boolean> {
-    return await this.initializeTwitchClient();
+    return (await Promise.all([this.initializeTwitchClient(), this.userInitService.initialize()])).every((result) => result);
   }
 
   private async handleChatMessageEvent(

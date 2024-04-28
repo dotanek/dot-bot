@@ -1,3 +1,3 @@
 export class TwitchUser {
-  constructor(readonly name: string) {}
+  constructor(readonly id: string | null, readonly name: string) {}
 }
