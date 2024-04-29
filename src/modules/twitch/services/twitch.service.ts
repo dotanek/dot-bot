@@ -1,27 +1,37 @@
-import { ChatUserstate, Client } from 'tmi.js';
-import config from '../../../config/config';
+import { ChatUserstate } from 'tmi.js';
 import { TwitchException } from '../exception/twitch.exception';
 import { TwitchClient } from '../types/twitch-client';
 import { UnableToConnectException } from '../exception/unable-to-connect.exception';
 import { TwitchEvent } from '../enum/twitch-event.enum';
-import { CommandProvider } from '../provider/command.provider';
+import { COMMAND_PROVIDER, ICommandProvider } from '../provider/command.provider';
 import { ChatMessage } from '../value-objects/chat-message';
 import { TwitchContext } from '../value-objects/twitch-context';
-import { UserInitService } from './user-init.service';
+import { DependencyProvider } from '../../../core/dependency/dependency-provider';
+import { TWITCH_CLIENT } from '../const/twitch-client.key';
 
-export class TwitchService {
+export const TWITCH_SERVICE = 'twitch-service';
+
+export interface ITwitchService {
+  initialize(): Promise<boolean>;
+}
+
+export class TwitchService implements ITwitchService {
   private readonly twitchClient: TwitchClient;
-  private readonly commandProvider: CommandProvider;
-  private readonly userInitService: UserInitService;
+  private readonly commandProvider: ICommandProvider;
 
   constructor() {
-    this.twitchClient = this.createTwitchClient();
-    this.userInitService = new UserInitService();
-    this.commandProvider = new CommandProvider(this.twitchClient, this.userInitService);
+    const dependencyProvider = DependencyProvider.getInstance();
+
+    this.twitchClient = dependencyProvider.get(TWITCH_CLIENT);
+    this.commandProvider = dependencyProvider.get(COMMAND_PROVIDER);
   }
 
   async initialize(): Promise<boolean> {
-    return (await Promise.all([this.initializeTwitchClient(), this.userInitService.initialize()])).every((result) => result);
+    return (
+      await Promise.all([
+        this.initializeTwitchClient(),
+      ])
+    ).every((result) => result);
   }
 
   private async handleChatMessageEvent(
@@ -35,7 +45,7 @@ export class TwitchService {
     try {
       if (chatMessage.isCommand) {
         const chatCommand = chatMessage.toChatCommand();
-        const command = await this.commandProvider.getBy(chatCommand.command);
+        const command = this.commandProvider.getBy(chatCommand.command);
 
         await command.execute(chatCommand, twitchContext);
       }
@@ -46,17 +56,6 @@ export class TwitchService {
         throw exception;
       }
     }
-  }
-
-  private createTwitchClient(): TwitchClient {
-    return new Client({
-      options: { debug: false },
-      identity: {
-        username: config.twitch.username,
-        password: config.twitch.token,
-      },
-      channels: config.twitch.channels,
-    });
   }
 
   private async initializeTwitchClient(): Promise<boolean> {

@@ -1,42 +1,36 @@
 import { CommandName } from '../enum/command-name.enum';
 import { Command } from '../command/command.base';
+import { CommandNotFoundCommandsException } from '../exception/command-not-found.commands-exception';
 import { GuguCommand, LurkCommand, TestCommand } from '../command';
-import { TwitchClient } from '../types/twitch-client';
 import { FrogCommand } from '../command/frog.command';
-import { QuotesCommand } from '../command/quotes.command';
-import { QuoteRepository } from '../repository/quote.repository';
-import { GambaCommand } from '../command/gamba.command';
-
-import database from '../../../database/database';
+import { BanCommand } from '../command/ban.command';
 import { PointsCommand } from '../command/points.command';
-import { UserInitService } from '../services/user-init.service';
-import { UserRepository } from '../repository/user.repository';
+import { QuotesCommand } from '../command/quotes.command';
+
+export const COMMAND_PROVIDER = 'command-provider';
+
+export interface ICommandProvider {
+  getBy(name: CommandName): Command;
+}
+
+const COMMAND_GET_STRATEGY: Partial<Record<CommandName, () => Command>> = {
+  [CommandName.GUGU]: () => new GuguCommand(),
+  [CommandName.LURK]: () => new LurkCommand(),
+  [CommandName.FROG]: () => new FrogCommand(),
+  [CommandName.TEST]: () => new TestCommand(),
+  [CommandName.BAN]: () => new BanCommand(),
+  [CommandName.POINTS]: () => new PointsCommand(),
+  [CommandName.QUOTES]: () => new QuotesCommand(),
+};
 
 export class CommandProvider {
-  private readonly commands: Record<CommandName, () => Promise<Command>>;
+  getBy(name: CommandName): Command {
+    const getter = COMMAND_GET_STRATEGY[name];
 
-  constructor(
-    private readonly twitchClient: TwitchClient,
-    private readonly userInitService: UserInitService,
-  ) {
-    this.commands = {
-      [CommandName.GUGU]: async () => new GuguCommand(twitchClient),
-      [CommandName.TEST]: async () => new TestCommand(twitchClient),
-      [CommandName.LURK]: async () => new LurkCommand(twitchClient),
-      [CommandName.FROG]: async () => new FrogCommand(twitchClient),
-      [CommandName.QUOTES]: async () =>
-        new QuotesCommand(twitchClient, new QuoteRepository(await database)),
-      [CommandName.GAMBA]: async () => new GambaCommand(twitchClient),
-      [CommandName.POINTS]: async () =>
-        new PointsCommand(
-          twitchClient,
-          new UserRepository(await database),
-          userInitService,
-        ),
-    };
-  }
+    if (!getter) {
+      throw new CommandNotFoundCommandsException(name);
+    }
 
-  getBy(name: CommandName): Promise<Command> {
-    return this.commands[name]();
+    return getter();
   }
 }

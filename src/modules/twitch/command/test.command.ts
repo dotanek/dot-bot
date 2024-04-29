@@ -8,6 +8,6 @@ export class TestCommand extends Command {
 
   async execute(chatTarget: ChatCommand, twitchContext: TwitchContext): Promise<void> {
     console.log(twitchContext);
-    await this.twitchClient.say(twitchContext.room.channel, 'Hello world!');
+    await this._twitchClient.say(twitchContext.room.channel, 'Hello world!');
   }
 }

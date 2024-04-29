@@ -7,6 +7,6 @@ export class GuguCommand extends Command {
   name = CommandName.GUGU;
 
   async execute(chatCommand: ChatCommand, twitchContext: TwitchContext): Promise<void> {
-    await this.twitchClient.say(twitchContext.room.channel, 'gaga');
+    await this._twitchClient.say(twitchContext.room.channel, 'gaga');
   }
 }

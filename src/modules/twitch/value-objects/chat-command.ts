@@ -1,7 +1,7 @@
 import {CommandName} from '../enum/command-name.enum';
 import {ChatMessage} from "./chat-message";
 import {CannotCreateChatCommandException} from "../exception/cannot-create-chat-command.exception";
-import {IsEnumValidator} from "../../common/validator/is-enum.validator";
+import {IsEnumValidator} from "../../../core/common/validator/is-enum.validator";
 
 export class ChatCommand {
   constructor(

@@ -3,17 +3,17 @@ import { Repository } from 'typeorm';
 import { User } from '../entity/user.entity';
 
 export class UserRepository {
-  private readonly repository: Repository<User>;
+  private readonly _repository: Repository<User>;
 
-  constructor(database: Database) {
-    this.repository = database.getRepository(User);
+  constructor() {
+    this._repository = Database.getInstance().getRepository(User);
   }
 
   findOneByExternalId(externalId: string): Promise<User | null> {
-    return this.repository.findOneBy({ externalId });
+    return this._repository.findOneBy({ externalId });
   }
 
   async save(user: User): Promise<void> {
-    await this.repository.save(user);
+    await this._repository.save(user);
   }
 }

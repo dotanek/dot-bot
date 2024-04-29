@@ -1,4 +1,4 @@
-import { IValidator } from '../../../system-definitions/interface/validator.interface';
+import { IValidator } from '../interface/validator.interface';
 
 export class IsNumberValidator implements IValidator<string> {
   check(value: string): boolean {

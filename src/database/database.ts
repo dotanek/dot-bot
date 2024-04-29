@@ -6,22 +6,22 @@ import {EntityTarget} from "typeorm/common/EntityTarget";
 export class Database {
   private static instance: Database;
 
-  constructor(readonly dataSource: DataSource) {}
+  constructor(private readonly _dataSource: DataSource) {}
 
   getRepository<Entity extends ObjectLiteral>(target: EntityTarget<Entity>): Repository<Entity> {
-    return this.dataSource.getRepository(target);
+    return this._dataSource.getRepository(target);
   }
 
-  static async getInstance(): Promise<Database> {
-    return this.instance || (this.instance = await this.createInstance());
+  async initialize(): Promise<void> {
+    await this._dataSource.initialize();
   }
 
-  private static async createInstance(): Promise<Database> {
-    const dataSource = datasource;
+  static getInstance(): Database {
+    return this.instance || (this.instance = this.createInstance());
+  }
 
-    await dataSource.initialize();
-
-    return new Database(dataSource);
+  private static createInstance(): Database {
+    return new Database(datasource);
   }
 }
 
