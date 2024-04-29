@@ -1,4 +1,4 @@
-import database, { Database } from '../../../database/database';
+import { Database } from '../../../database/database';
 import { Repository } from 'typeorm';
 import { User } from '../entity/user.entity';
 

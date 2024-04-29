@@ -3,7 +3,6 @@ import { CommandName } from '../enum/command-name.enum';
 import { ChatCommand } from '../value-objects/chat-command';
 import { TwitchContext } from '../value-objects/twitch-context';
 import { QuoteRepository } from '../repository/quote.repository';
-import { TwitchClient } from '../types/twitch-client';
 
 export class QuotesCommand extends Command {
   readonly name = CommandName.QUOTES;

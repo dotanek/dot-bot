@@ -5,7 +5,7 @@ import { ConfigKey } from '../../../config/enum/config-key.enum';
 
 export class TwitchClientFactory {
   static get(config: Config): TwitchClient {
-    const twitchClient = new Client({
+    return  new Client({
       options: { debug: false },
       identity: {
         username: config.getEnvironmental<string>(
@@ -15,7 +15,5 @@ export class TwitchClientFactory {
       },
       channels: config.twitch.channels,
     });
-
-    return twitchClient;
   }
 }
