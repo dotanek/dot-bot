@@ -2,7 +2,7 @@ import { Command } from './command.base';
 import { CommandName } from '../enum/command-name.enum';
 import { ChatCommand } from '../value-objects/chat-command';
 import { TwitchContext } from '../value-objects/twitch-context';
-import { IsNumberValidator } from '../../common/validator/is-number.validator';
+import { IsNumberValidator } from '../../../core/common/validator/is-number.validator';
 import { InvalidCommandArgumentException } from '../exception/invalid-command-argument.exception';
 
 const POINTS_ARG_ALL = 'all';
@@ -14,8 +14,9 @@ export class GambaCommand extends Command {
     chatCommand: ChatCommand,
     twitchContext: TwitchContext,
   ): Promise<void> {
+
     const points = await this.getValue(chatCommand.args[0]);
-    await this.twitchClient.say(
+    await this._twitchClient.say(
       twitchContext.room.channel,
       `You trying to gamba for ${points}`,
     );

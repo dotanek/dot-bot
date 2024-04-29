@@ -4,18 +4,16 @@ import { Client } from 'tmi.js';
 import { ConfigKey } from '../../../config/enum/config-key.enum';
 
 export class TwitchClientFactory {
-  constructor(private readonly config: Config) {}
-
-  get(): TwitchClient {
+  static get(config: Config): TwitchClient {
     const twitchClient = new Client({
       options: { debug: false },
       identity: {
-        username: this.config.getEnvironmental<string>(
+        username: config.getEnvironmental<string>(
           ConfigKey.TWITCH_USERNAME,
         ),
-        password: this.config.getEnvironmental<string>(ConfigKey.TWITCH_TOKEN),
+        password: config.getEnvironmental<string>(ConfigKey.TWITCH_TOKEN),
       },
-      channels: this.config.twitch.channels,
+      channels: config.twitch.channels,
     });
 
     return twitchClient;

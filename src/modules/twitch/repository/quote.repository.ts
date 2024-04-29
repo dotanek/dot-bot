@@ -5,8 +5,8 @@ import { Database } from '../../../database/database';
 export class QuoteRepository {
   private readonly repository: Repository<Quote>;
 
-  constructor(database: Database) {
-    this.repository = database.getRepository(Quote);
+  constructor() {
+    this.repository = Database.getInstance().getRepository(Quote);
   }
 
   count(): Promise<number> {

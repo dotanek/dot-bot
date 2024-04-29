@@ -1,21 +1,30 @@
 import { UserRepository } from '../repository/user.repository';
-import database from '../../../database/database';
 import { User } from '../entity/user.entity';
 
-export class UserInitService {
-  private userRepository: UserRepository;
+export const USER_INIT_SERVICE = 'user-init-service';
+
+export interface IUserInitService {
+  initializeUser(externalId: string): Promise<User>;
+}
+
+export class UserInitService implements IUserInitService {
+  private _userRepository: UserRepository;
+
+  constructor() {
+    this._userRepository = new UserRepository();
+  }
 
   async initializeUser(externalId: string): Promise<User> {
     const user = User.createFor(externalId);
 
-    await this.userRepository.save(user);
+    await this._userRepository.save(user);
 
     return user;
   }
 
   async initialize() {
     try {
-      this.userRepository = new UserRepository(await database);
+      this._userRepository = new UserRepository();
     } catch (error) {
       console.error(error);
       return false;

@@ -1,4 +1,4 @@
-import {Exception} from "../../system-definitions/base/exception";
+import {Exception} from "../../core/base/exception";
 
 export class DependencyProvisionException extends Exception {
   constructor(dependency: string) {

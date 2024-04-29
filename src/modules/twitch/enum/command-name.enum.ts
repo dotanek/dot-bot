@@ -5,5 +5,6 @@ export enum CommandName {
   FROG = 'frog',
   QUOTES = 'quotes',
   GAMBA = 'gamba',
-  POINTS = 'points'
+  POINTS = 'points',
+  BAN = 'ban',
 }

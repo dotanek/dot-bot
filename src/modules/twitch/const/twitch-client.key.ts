@@ -1,0 +1,1 @@
+export const TWITCH_CLIENT = 'twitch-client';

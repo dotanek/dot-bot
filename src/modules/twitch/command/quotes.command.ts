@@ -7,21 +7,20 @@ import { TwitchClient } from '../types/twitch-client';
 
 export class QuotesCommand extends Command {
   readonly name = CommandName.QUOTES;
+  private readonly _quoteRepository: QuoteRepository;
 
-  constructor(
-    twitchClient: TwitchClient,
-    private readonly quoteRepository: QuoteRepository,
-  ) {
-    super(twitchClient);
+  constructor() {
+    super();
+    this._quoteRepository = new QuoteRepository();
   }
 
   async execute(
     chatCommand: ChatCommand,
     twitchContext: TwitchContext,
   ): Promise<void> {
-    const quotesCount = await this.quoteRepository.count();
+    const quotesCount = await this._quoteRepository.count();
 
-    await this.twitchClient.say(
+    await this._twitchClient.say(
       twitchContext.room.channel,
       `There are currently ${quotesCount} quotes saved.`,
     );

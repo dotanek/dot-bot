@@ -1,4 +1,4 @@
-import {IValidator} from "../../../system-definitions/interface/validator.interface";
+import { IValidator } from '../interface/validator.interface';
 
 export class IsEnumValidator implements IValidator<string> {
   constructor(private readonly enumerate: object) {}

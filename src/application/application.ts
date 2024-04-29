@@ -1,12 +1,17 @@
-import { IModule } from '../system-definitions/interface/module.interface';
 import { ApplicationInitException } from './exception/application-init.exception';
 import { TwitchModule } from '../modules/twitch/twitch.module';
+import { IModule } from '../core/common/interface/module.interface';
+import { Database } from '../database/database';
 
 export class Application {
   private constructor(private readonly modules: IModule[]) {}
 
   async initialize() {
     console.log(`Starting application.`);
+
+    console.log(`Initializing database...`);
+    await Database.getInstance().initialize();
+
     console.log(`Initializing modules...`);
 
     let someInitialized = false;

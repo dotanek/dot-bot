@@ -1,4 +1,4 @@
-import {Exception} from "../../system-definitions/base/exception";
+import { Exception } from '../../core/common/base/exception';
 
 export class ApplicationInitException extends Exception {
   constructor(reason: string) {
