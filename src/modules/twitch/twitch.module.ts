@@ -45,8 +45,4 @@ export class TwitchModule implements IModule {
 
     this.service = dependencyProvider.get(TWITCH_SERVICE);
   }
-
-  async initialize(): Promise<boolean> {
-    return this.service.initialize();
-  }
 }

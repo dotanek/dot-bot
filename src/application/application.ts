@@ -1,44 +1,23 @@
-import { ApplicationInitException } from './exception/application-init.exception';
 import { TwitchModule } from '../modules/twitch/twitch.module';
 import { IModule } from '../core/common/interface/module.interface';
 import { Database } from '../database/database';
+import { DependencyProvider } from '../core/dependency/dependency-provider';
 
 export class Application {
   private constructor(private readonly modules: IModule[]) {}
 
   async initialize() {
-    console.log(`Starting application.`);
+    console.log('Starting application.');
 
-    console.log(`Initializing database...`);
+    process.stdout.write('Initializing database...\t');
     await Database.getInstance().initialize();
+    process.stdout.write('[success]\n');
 
-    console.log(`Initializing modules...`);
+    process.stdout.write('Initializing dependencies...\t');
+    await DependencyProvider.getInstance().initialize();
+    process.stdout.write('[success]\n');
 
-    let someInitialized = false;
-
-    await Promise.all(
-      this.modules.map(async (module) => {
-        const initResult = await module.initialize();
-
-        console.log(
-          `${module.name}... ${' '.repeat(20 - module.name.length)} [${
-            initResult ? 'success' : 'failure'
-          }]`,
-        );
-
-        if (initResult) {
-          someInitialized = true;
-        }
-
-        return initResult;
-      }),
-    );
-
-    if (!someInitialized) {
-      throw new ApplicationInitException('no modules initialized successfully');
-    }
-
-    console.log(`Application started.`);
+    console.log('Application started.');
   }
 
   static create(): Application {

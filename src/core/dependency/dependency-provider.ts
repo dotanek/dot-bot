@@ -5,6 +5,7 @@ import {
 import { DependencyDuplicatedException } from './exception/dependency-duplicated.exception';
 import { DependencyNotRegisteredException } from './exception/dependency-not-registered.exception';
 import { DependencyMethodNotProvidedException } from './exception/dependency-method-not-provided.exception';
+import { InterfaceCheckUtil } from '../common/utils/interface-check.util';
 
 export class DependencyProvider implements IDependencyProvider {
   private static _instance: DependencyProvider;
@@ -26,7 +27,7 @@ export class DependencyProvider implements IDependencyProvider {
       }
 
       if (dependency.class) {
-        this._dependencies[dependency.key]  = new dependency.class();
+        this._dependencies[dependency.key] = new dependency.class();
         continue;
       }
 
@@ -37,6 +38,18 @@ export class DependencyProvider implements IDependencyProvider {
 
       throw new DependencyMethodNotProvidedException(dependency.key);
     }
+  }
+
+  async initialize(): Promise<boolean> {
+    const results = [];
+
+    for (const instance of Object.values(this._dependencies)) {
+      if (InterfaceCheckUtil.isInitializable(instance)) {
+        results.push(await instance.initialize());
+      }
+    }
+
+    return results.every((result) => result);
   }
 
   static getInstance(): DependencyProvider {
