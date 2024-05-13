@@ -31,7 +31,7 @@ export class Config {
       password: this.getEnvironmental<string>(ConfigKey.DATABASE_PASSWORD),
       database: this.getEnvironmental<string>(ConfigKey.DATABASE_NAME),
       synchronize: false,
-      logging: true,
+      logging: false,
     };
   }
 
