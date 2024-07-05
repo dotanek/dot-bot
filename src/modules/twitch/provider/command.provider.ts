@@ -9,6 +9,7 @@ import { QuotesCommand } from '../command/quotes.command';
 import { GambaCommand } from '../command/gamba.command';
 import { StinkyCommand } from '../command/stinky.command';
 import { DiarrheaCommand } from '../command/diarrhea.command';
+import { PPCommand } from '../command/pp.command';
 
 export const COMMAND_PROVIDER = 'command-provider';
 
@@ -27,6 +28,7 @@ const COMMAND_GET_STRATEGY: Partial<Record<CommandName, () => Command>> = {
   [CommandName.GAMBA]: () => new GambaCommand(),
   [CommandName.STINKY]: () => new StinkyCommand(),
   [CommandName.DIARRHEA]: () => new DiarrheaCommand(),
+  [CommandName.PP]: () => new PPCommand(),
 };
 
 export class CommandProvider {

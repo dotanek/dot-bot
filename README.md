@@ -37,4 +37,4 @@ docker-compose up -d database
 
 ### ToDo
 - Application logs via dedicated logger class
-- Refactor dependency injection
+- Add quote support in command arguments

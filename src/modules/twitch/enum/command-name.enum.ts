@@ -9,4 +9,5 @@ export enum CommandName {
   BAN = 'ban',
   STINKY = 'stinky',
   DIARRHEA = 'diarrhea',
+  PP = 'pp',
 }
