@@ -47,9 +47,9 @@ export class PointsCommand extends Command {
     );
   }
 
-  private _handleAdd(): void {}
+  //private _handleAdd(): void {}
 
-  private _handleRemove(): void {}
+  //private _handleRemove(): void {}
 
   private async _handleSet(chatCommand: ChatCommand, twitchContext: TwitchContext): Promise<void> {
     if (!twitchContext.user.mod) {

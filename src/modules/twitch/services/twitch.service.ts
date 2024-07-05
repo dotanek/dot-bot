@@ -11,7 +11,6 @@ import { ChatMessage } from '../value-objects/chat-message';
 import { TwitchContext } from '../value-objects/twitch-context';
 import { DependencyProvider } from '../../../core/dependency/dependency-provider';
 import { TWITCH_CLIENT } from '../const/twitch-client.key';
-import { InvalidCommandArgumentException } from '../exception/invalid-command-argument.exception';
 import { isChattable } from '../interfaces/chattable.interface';
 
 export const TWITCH_SERVICE = 'twitch-service';
