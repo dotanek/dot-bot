@@ -1,11 +1,13 @@
 import { CommandName } from '../enum/command-name.enum';
 import { Command } from '../command/command.base';
-import { CommandNotFoundCommandsException } from '../exception/command-not-found.commands-exception';
+import { CommandNotFoundTwitchException } from '../exception/command-not-found.twitch-exception';
 import { GuguCommand, LurkCommand, TestCommand } from '../command';
 import { FrogCommand } from '../command/frog.command';
 import { BanCommand } from '../command/ban.command';
 import { PointsCommand } from '../command/points.command';
 import { QuotesCommand } from '../command/quotes.command';
+import { GambaCommand } from '../command/gamba.command';
+import { StinkyCommand } from '../command/stinky.command';
 
 export const COMMAND_PROVIDER = 'command-provider';
 
@@ -21,6 +23,8 @@ const COMMAND_GET_STRATEGY: Partial<Record<CommandName, () => Command>> = {
   [CommandName.BAN]: () => new BanCommand(),
   [CommandName.POINTS]: () => new PointsCommand(),
   [CommandName.QUOTES]: () => new QuotesCommand(),
+  [CommandName.GAMBA]: () => new GambaCommand(),
+  [CommandName.STINKY]: () => new StinkyCommand(),
 };
 
 export class CommandProvider {
@@ -28,7 +32,7 @@ export class CommandProvider {
     const getter = COMMAND_GET_STRATEGY[name];
 
     if (!getter) {
-      throw new CommandNotFoundCommandsException(name);
+      throw new CommandNotFoundTwitchException(name);
     }
 
     return getter();

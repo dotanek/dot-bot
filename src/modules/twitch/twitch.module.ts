@@ -7,9 +7,9 @@ import {
 import { IModule } from '../../core/common/interface/module.interface';
 import { DependencyProvider } from '../../core/dependency/dependency-provider';
 import {
-  USER_INIT_SERVICE,
-  UserInitService,
-} from './services/user-init.service';
+  USER_SERVICE,
+  UserService,
+} from './services/user.service';
 import { TWITCH_CLIENT } from './const/twitch-client.key';
 import { TwitchClientFactory } from './factory/twitch-client.factory';
 import { Config } from '../../config/config';
@@ -30,8 +30,8 @@ export class TwitchModule implements IModule {
         factory: () => TwitchClientFactory.get(config),
       },
       {
-        key: USER_INIT_SERVICE,
-        class: UserInitService,
+        key: USER_SERVICE,
+        class: UserService,
       },
       {
         key: COMMAND_PROVIDER,

@@ -8,13 +8,17 @@ export class BanCommand extends Command {
     chatCommand: ChatCommand,
     twitchContext: TwitchContext,
   ): Promise<void> {
-    let target = chatCommand.args[0];
+    let target = chatCommand.getArgument(0);
 
     if (!target) {
       target = twitchContext.user.name;
     }
 
-    await this._twitchClient.say(twitchContext.room.channel, `${target} is now banned`)
+    await this._twitchClient.say(
+      twitchContext.room.channel,
+      `${target} is now banned`,
+    );
   }
-  name: CommandName;
+
+  name = CommandName.BAN;
 }

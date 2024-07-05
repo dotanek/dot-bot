@@ -5,7 +5,7 @@ import {
 import { DependencyDuplicatedException } from './exception/dependency-duplicated.exception';
 import { DependencyNotRegisteredException } from './exception/dependency-not-registered.exception';
 import { DependencyMethodNotProvidedException } from './exception/dependency-method-not-provided.exception';
-import { InterfaceCheckUtil } from '../common/utils/interface-check.util';
+import { isInitializable } from '../common/interface/initializable.interface';
 
 export class DependencyProvider implements IDependencyProvider {
   private static _instance: DependencyProvider;
@@ -44,7 +44,7 @@ export class DependencyProvider implements IDependencyProvider {
     const results = [];
 
     for (const instance of Object.values(this._dependencies)) {
-      if (InterfaceCheckUtil.isInitializable(instance)) {
+      if (isInitializable(instance)) {
         results.push(await instance.initialize());
       }
     }
