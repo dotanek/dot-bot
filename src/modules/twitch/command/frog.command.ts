@@ -11,6 +11,7 @@ export class FrogCommand extends Command {
     [People.DOTANEK]: () => `you are always and forever 200% frog 🐸`,
     [People.CHILLED]: () => `you are 150% frog (are you cheating?!) 🐸`,
     [People.TOLL]: () => `sir you are a raven >:c`,
+    [People.KATAETO]: () => `you are ${this.getRandomPercent()+50}% frog today 🐸`,
     default: () => `you are ${this.getRandomPercent()}% frog today 🐸`,
   };
 

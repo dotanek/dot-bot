@@ -3,11 +3,15 @@ import { TwitchException } from '../exception/twitch.exception';
 import { TwitchClient } from '../types/twitch-client';
 import { UnableToConnectException } from '../exception/unable-to-connect.exception';
 import { TwitchEvent } from '../enum/twitch-event.enum';
-import { COMMAND_PROVIDER, ICommandProvider } from '../provider/command.provider';
+import {
+  COMMAND_PROVIDER,
+  ICommandProvider,
+} from '../provider/command.provider';
 import { ChatMessage } from '../value-objects/chat-message';
 import { TwitchContext } from '../value-objects/twitch-context';
 import { DependencyProvider } from '../../../core/dependency/dependency-provider';
 import { TWITCH_CLIENT } from '../const/twitch-client.key';
+import { isChattable } from '../interfaces/chattable.interface';
 
 export const TWITCH_SERVICE = 'twitch-service';
 
@@ -27,11 +31,9 @@ export class TwitchService implements ITwitchService {
   }
 
   async initialize(): Promise<boolean> {
-    return (
-      await Promise.all([
-        this.initializeTwitchClient(),
-      ])
-    ).every((result) => result);
+    return (await Promise.all([this.initializeTwitchClient()])).every(
+      (result) => result,
+    );
   }
 
   private async handleChatMessageEvent(
@@ -50,6 +52,10 @@ export class TwitchService implements ITwitchService {
         await command.execute(chatCommand, twitchContext);
       }
     } catch (exception: unknown) {
+      if (exception instanceof Object && isChattable(exception)) {
+        await this.twitchClient.say(twitchContext.room.channel, exception.chatMessage);
+      }
+
       if (exception instanceof TwitchException) {
         this.catchException(exception);
       } else {

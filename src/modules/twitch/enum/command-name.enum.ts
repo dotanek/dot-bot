@@ -7,4 +7,5 @@ export enum CommandName {
   GAMBA = 'gamba',
   POINTS = 'points',
   BAN = 'ban',
+  STINKY = 'stinky'
 }
