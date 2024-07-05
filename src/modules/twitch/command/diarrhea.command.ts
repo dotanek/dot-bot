@@ -11,5 +11,5 @@ export class DiarrheaCommand extends Command {
     await this._twitchClient.say(twitchContext.room.channel, 'shit shit shit');
   }
 
-  name: CommandName.DIARRHEA;
+  name = CommandName.DIARRHEA;
 }
