@@ -6,14 +6,15 @@ import {
 } from './services/twitch.service';
 import { IModule } from '../../core/common/interface/module.interface';
 import { DependencyProvider } from '../../core/dependency/dependency-provider';
-import {
-  USER_SERVICE,
-  UserService,
-} from './services/user.service';
+import { USER_SERVICE, UserService } from './services/user.service';
 import { TWITCH_CLIENT } from './const/twitch-client.key';
 import { TwitchClientFactory } from './factory/twitch-client.factory';
 import { Config } from '../../config/config';
 import { COMMAND_PROVIDER, CommandProvider } from './provider/command.provider';
+import {
+  PP_RESPONSE_SERVICE,
+  PPResponseService,
+} from './services/pp-response.service';
 
 export class TwitchModule implements IModule {
   readonly name = ModuleName.TWITCH;
@@ -32,6 +33,10 @@ export class TwitchModule implements IModule {
       {
         key: USER_SERVICE,
         class: UserService,
+      },
+      {
+        key: PP_RESPONSE_SERVICE,
+        class: PPResponseService,
       },
       {
         key: COMMAND_PROVIDER,

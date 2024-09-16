@@ -13,6 +13,10 @@ export class PPResponseRepository {
     return this._repository.findBy({ verified: true });
   }
 
+  findOne(id: string): Promise<PPResponse | null> {
+    return this._repository.findOneBy({ id })
+  }
+
   async save(ppResponse: PPResponse): Promise<void> {
     await this._repository.save(ppResponse);
   }
