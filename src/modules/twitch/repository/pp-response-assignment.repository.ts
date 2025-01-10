@@ -1,28 +1,28 @@
 import { Repository } from 'typeorm';
 import { Database } from '../../../database/database';
-import { PpResponseAssignmentEntity } from '../entity/pp-response-assignment.entity';
+import { PpResponseAssignment } from '../entity/pp-response.assignment';
 
 export class PPResponseAssignmentRepository {
-  private readonly _repository: Repository<PpResponseAssignmentEntity>;
+  private readonly _repository: Repository<PpResponseAssignment>;
 
   constructor() {
     this._repository =
-      Database.getInstance().getRepository(PpResponseAssignmentEntity);
+      Database.getInstance().getRepository(PpResponseAssignment);
   }
 
-  find(): Promise<PpResponseAssignmentEntity[]> {
+  find(): Promise<PpResponseAssignment[]> {
     return this._repository.find();
   }
 
-  findOne(userId: string): Promise<PpResponseAssignmentEntity | null> {
+  findOne(userId: string): Promise<PpResponseAssignment | null> {
     return this._repository.findOneBy({ userId });
   }
 
-  async save(assignment: PpResponseAssignmentEntity): Promise<void> {
+  async save(assignment: PpResponseAssignment): Promise<void> {
     await this._repository.save(assignment);
   }
 
-  async delete(assignments: PpResponseAssignmentEntity[]): Promise<void> {
+  async delete(assignments: PpResponseAssignment[]): Promise<void> {
     await this._repository.remove(assignments);
   }
 }

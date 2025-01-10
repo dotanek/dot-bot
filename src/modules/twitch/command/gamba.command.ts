@@ -8,7 +8,7 @@ import { IUserService, USER_SERVICE } from '../services/user.service';
 import { DependencyProvider } from '../../../core/dependency/dependency-provider';
 import { IsPercentValidator } from '../../../core/common/validator/is-percent.validator';
 import { IsPositiveNumberValidator } from '../../../core/common/validator/is-positive-number.validator';
-import { RandomGenerator } from '../../../core/random/random-generator';
+import { RandomGenerator } from '../../../core/random-generator';
 
 const POINTS_ARG_ALL = 'all';
 

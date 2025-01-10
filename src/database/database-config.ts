@@ -5,7 +5,8 @@ import { User } from '../modules/twitch/entity/user.entity';
 import { Wealth } from '../modules/twitch/entity/wealth.entity';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { PPResponse } from '../modules/twitch/entity/pp-response.entity';
-import { PpResponseAssignmentEntity } from '../modules/twitch/entity/pp-response-assignment.entity';
+import { PpResponseAssignment } from '../modules/twitch/entity/pp-response.assignment';
+import { LoveAssignment } from '../modules/twitch/entity/love.entity';
 
 const config = Config.getInstance().database;
 
@@ -18,7 +19,7 @@ const databaseConfig: DataSourceOptions = {
   database: config.database,
   synchronize: config.synchronize,
   logging: config.logging,
-  entities: [Quote, User, Wealth, PPResponse, PpResponseAssignmentEntity],
+  entities: [Quote, User, Wealth, PPResponse, PpResponseAssignment, LoveAssignment],
   migrations: [`${__dirname}\\migration\\*.ts`],
   namingStrategy: new SnakeNamingStrategy(),
 };

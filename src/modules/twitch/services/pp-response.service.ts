@@ -2,8 +2,8 @@ import { PPResponse } from '../entity/pp-response.entity';
 import { PPResponseRepository } from '../repository/pp-response.repository';
 import { PPResponseAssignmentRepository } from '../repository/pp-response-assignment.repository';
 import { ResponseNotFoundTwitchException } from '../exception/response-not-found.twitch-exception';
-import { RandomGenerator } from '../../../core/random/random-generator';
-import { PpResponseAssignmentEntity } from '../entity/pp-response-assignment.entity';
+import { RandomGenerator } from '../../../core/random-generator';
+import { PpResponseAssignment } from '../entity/pp-response.assignment';
 
 export const PP_RESPONSE_SERVICE = 'pp-response-service';
 
@@ -48,7 +48,7 @@ export class PPResponseService {
 
   async assign(userId: string, responseId: string): Promise<void> {
     await this._ppResponseAssignmentRepository.save(
-      PpResponseAssignmentEntity.create(userId, responseId),
+      PpResponseAssignment.create(userId, responseId),
     );
   }
 }
