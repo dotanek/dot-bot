@@ -8,6 +8,13 @@ import { DependencyProvider } from '../../../core/dependency/dependency-provider
 import { InvalidCommandArgumentException } from '../exception/invalid-command-argument.exception';
 import { UserNotFoundTwitchException } from '../exception/user-not-found.twitch-exception';
 import { IsNumberValidator } from '../../../core/common/validator/is-number.validator';
+import { User } from '../entity/user.entity';
+
+enum SubCommand {
+  Set = 'set',
+  Add = 'add',
+  Remove = 'remove',
+}
 
 export class PointsCommand extends Command {
   private readonly _userService: UserService;
@@ -29,17 +36,30 @@ export class PointsCommand extends Command {
       return this._handleNoArg(twitchContext);
     }
 
+    const argOne = chatCommand.getArgument(0);
+
+    if (chatCommand.getArgument(0) === SubCommand.Set) {
+      return await this._handleSet(chatCommand, twitchContext);
+    }
+
+    if (argOne === SubCommand.Add) {
+      return await this._handleAdd(chatCommand, twitchContext);
+    }
+
+    if (argOne === SubCommand.Remove) {
+      return await this._handleRemove(chatCommand, twitchContext);
+    }
+
     await this._handleSet(chatCommand, twitchContext);
   }
 
   name = CommandName.POINTS;
 
   private async _handleNoArg(twitchContext: TwitchContext): Promise<void> {
-    if (!twitchContext.user.id) {
-      return;
-    }
-
-    const user = await this._userService.findOrCreate(twitchContext.user.id, twitchContext.user.name);
+    const user = await this._userService.findOrCreate(
+      twitchContext.user.id,
+      twitchContext.user.name,
+    );
 
     await this._twitchClient.say(
       twitchContext.room.channel,
@@ -47,39 +67,115 @@ export class PointsCommand extends Command {
     );
   }
 
-  //private _handleAdd(): void {}
-
-  //private _handleRemove(): void {}
-
-  private async _handleSet(chatCommand: ChatCommand, twitchContext: TwitchContext): Promise<void> {
+  private async _handleSet(
+    chatCommand: ChatCommand,
+    twitchContext: TwitchContext,
+  ): Promise<void> {
     if (!twitchContext.user.mod) {
       return;
     }
 
-    const userArg = chatCommand.getArgument(1);
-
-    if (!userArg) {
-      throw new InvalidCommandArgumentException(this.name, 'username');
-    }
+    const user = await this._findUser(chatCommand.getArgument(1));
 
     const pointsArg = chatCommand.getArgument(2);
+
+    this._validatePointsArg(pointsArg);
 
     if (!pointsArg) {
       throw new InvalidCommandArgumentException(this.name, 'points');
     }
 
-    if (!new IsNumberValidator().check(pointsArg)) {
-      throw new InvalidCommandArgumentException(this.name, pointsArg, `not a number`)
-    }
-
-    const user = await this._userService.findByName(userArg);
-
-    if (!user) {
-      throw new UserNotFoundTwitchException(userArg);
-    }
-
     user.setWealth(+pointsArg);
 
     await this._userRepository.save(user);
+
+    await this._twitchClient.say(
+      twitchContext.room.channel,
+      `Set ${user.name} points to ${pointsArg}`,
+    );
+  }
+
+  private async _handleAdd(
+    chatCommand: ChatCommand,
+    twitchContext: TwitchContext,
+  ): Promise<void> {
+    if (!twitchContext.user.mod) {
+      return;
+    }
+
+    const user = await this._findUser(chatCommand.getArgument(1));
+
+    const pointsArg = chatCommand.getArgument(2);
+
+    this._validatePointsArg(pointsArg);
+
+    if (!pointsArg) {
+      throw new InvalidCommandArgumentException(this.name, 'points');
+    }
+
+    user.increaseWealth(+pointsArg);
+
+    await this._userRepository.save(user);
+
+    await this._twitchClient.say(
+      twitchContext.room.channel,
+      `Increased ${user.name} points to ${user.getWealth()}`,
+    );
+  }
+
+  private async _handleRemove(
+    chatCommand: ChatCommand,
+    twitchContext: TwitchContext,
+  ): Promise<void> {
+    if (!twitchContext.user.mod) {
+      return;
+    }
+
+    const user = await this._findUser(chatCommand.getArgument(1));
+
+    const pointsArg = chatCommand.getArgument(2);
+
+    this._validatePointsArg(pointsArg);
+
+    if (!pointsArg) {
+      throw new InvalidCommandArgumentException(this.name, 'points');
+    }
+
+    user.decreaseWealth(+pointsArg);
+
+    await this._userRepository.save(user);
+
+    await this._twitchClient.say(
+      twitchContext.room.channel,
+      `Reduced ${user.name} points to ${user.getWealth()}`,
+    );
+  }
+
+  private async _findUser(nameArg: string | null): Promise<User> {
+    if (!nameArg) {
+      throw new InvalidCommandArgumentException(this.name, 'username');
+    }
+
+    const user = await this._userService.findByName(nameArg.toLowerCase());
+
+    if (!user) {
+      throw new UserNotFoundTwitchException(nameArg);
+    }
+
+    return user;
+  }
+
+  private _validatePointsArg(pointsArg: string | null): void {
+    if (!pointsArg) {
+      throw new InvalidCommandArgumentException(this.name, 'points');
+    }
+
+    if (!new IsNumberValidator().check(pointsArg)) {
+      throw new InvalidCommandArgumentException(
+        this.name,
+        pointsArg,
+        `not a number`,
+      );
+    }
   }
 }

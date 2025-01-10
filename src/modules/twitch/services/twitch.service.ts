@@ -40,7 +40,12 @@ export class TwitchService implements ITwitchService {
     message: string,
     channel: string,
     userstate: ChatUserstate,
+    isSelf: boolean,
   ): Promise<void> {
+    if (isSelf) {
+      return;
+    }
+
     const chatMessage = ChatMessage.create(message);
     const twitchContext = TwitchContext.create(channel, userstate);
 
@@ -77,7 +82,7 @@ export class TwitchService implements ITwitchService {
           message: string,
           self: boolean,
           /* eslint-enable */
-        ) => this.handleChatMessageEvent(message, channel, userstate),
+        ) => this.handleChatMessageEvent(message, channel, userstate, self),
       );
     } catch (error: unknown) {
       if (typeof error === 'string') {

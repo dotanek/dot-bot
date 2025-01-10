@@ -13,7 +13,7 @@ export class PpResponseAssignmentEntity {
   date: Date;
 
   isExpired(): boolean {
-    return this.date.getDay() !== new Date().getDay();
+    return this.date.getDate() !== new Date().getDate();
   }
 
   static create(

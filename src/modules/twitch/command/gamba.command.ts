@@ -6,7 +6,6 @@ import { InvalidCommandArgumentException } from '../exception/invalid-command-ar
 import { UserRepository } from '../repository/user.repository';
 import { IUserService, USER_SERVICE } from '../services/user.service';
 import { DependencyProvider } from '../../../core/dependency/dependency-provider';
-import { InvalidUserException } from '../exception/invalid-user.exception';
 import { IsPercentValidator } from '../../../core/common/validator/is-percent.validator';
 import { IsPositiveNumberValidator } from '../../../core/common/validator/is-positive-number.validator';
 import { RandomGenerator } from '../../../core/random/random-generator';
@@ -24,18 +23,22 @@ export class GambaCommand extends Command {
     chatCommand: ChatCommand,
     twitchContext: TwitchContext,
   ): Promise<void> {
-    const externalId = twitchContext.user.id;
     const pointsArg = chatCommand.getArgument(0);
-
-    if (!externalId) {
-      throw new InvalidUserException('user has no external id');
-    }
 
     if (!pointsArg) {
       throw new InvalidCommandArgumentException(this.name, 'points');
     }
 
-    const user = await this._userService.findOrCreate(externalId, twitchContext.user.name);
+    const user = await this._userService.findOrCreate(twitchContext.user.id, twitchContext.user.name);
+
+    if (user.getWealth() < 0) {
+      await this._twitchClient.say(
+        twitchContext.room.channel,
+        `@${twitchContext.user.name}, bruv you trying to bet with a negative balance? lmao broke`
+      );
+      return;
+    }
+
     const points = await this.getValue(pointsArg, user.getWealth());
 
     const isWin = RandomGenerator.getInstance().getNumber() > 0;

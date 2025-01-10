@@ -38,27 +38,41 @@ export class PPCommand extends Command {
     chatCommand: ChatCommand,
     twitchContext: TwitchContext,
   ): Promise<void> {
+    // TODO assign response to a static name?
+
     if (!chatCommand.hasArguments()) {
-      return await this._handleNoArgs(twitchContext);
+      return await this._handleShow(chatCommand, twitchContext);
     }
 
     if (chatCommand.getArgument(0) === SubCommand.ADD) {
       return await this._handleAdd(chatCommand, twitchContext);
     }
+
+    return await this._handleShow(
+      chatCommand,
+      twitchContext,
+      chatCommand.getArgument(0)!.toLowerCase(),
+    );
   }
 
-  async _handleNoArgs(twitchContext: TwitchContext): Promise<void> {
-    if (!twitchContext.user.id) {
-      return;
-    }
+  async _handleShow(
+    chatCommand: ChatCommand,
+    twitchContext: TwitchContext,
+    target?: string,
+  ): Promise<void> {
 
-    const user = await this._userService.findOrCreate(
-      twitchContext.user.id,
-      twitchContext.user.name,
-    );
+    let user;
 
-    if (!user) {
-      throw new UserNotFoundTwitchException(twitchContext.user.name);
+    if (!target) {
+      user = await this._userService.findOrCreate(
+        twitchContext.user.id,
+        twitchContext.user.name,
+      );
+    } else {
+      user = await this._userService.findByName(target);
+      if (!user) {
+        throw new UserNotFoundTwitchException(target);
+      }
     }
 
     let response = await this._ppResponseService.findAssigned(user.id);
