@@ -1,8 +1,9 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm';
 import { TWITCH_SCHEMA } from './schema/twitch.schema';
+import { DateProvider } from '../../../core/date-provider';
 
 @Entity('pp_response_assignment', { schema: TWITCH_SCHEMA })
-export class PpResponseAssignmentEntity {
+export class PpResponseAssignment {
   @PrimaryColumn('uuid')
   userId: string;
 
@@ -13,18 +14,17 @@ export class PpResponseAssignmentEntity {
   date: Date;
 
   isExpired(): boolean {
-    return this.date.getDate() !== new Date().getDate();
+    return (
+      this.date.getDate() !== DateProvider.getInstance().getNow().getDate()
+    );
   }
 
-  static create(
-    userId: string,
-    responseId: string,
-  ): PpResponseAssignmentEntity {
-    const entity = new PpResponseAssignmentEntity();
+  static create(userId: string, responseId: string): PpResponseAssignment {
+    const entity = new PpResponseAssignment();
 
     entity.userId = userId;
     entity.responseId = responseId;
-    entity.date = new Date();
+    entity.date = DateProvider.getInstance().getNow();
 
     return entity;
   }

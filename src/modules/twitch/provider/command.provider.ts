@@ -14,6 +14,7 @@ import {
   TestCommand,
 } from '../command';
 import { CommandNotFoundTwitchException } from '../exception/command-not-found.twitch-exception';
+import { LoveCommand } from '../command/love.command';
 
 export const COMMAND_PROVIDER = 'command-provider';
 
@@ -33,6 +34,7 @@ const COMMANDS: { new (): Command }[] = [
   QuotesCommand,
   StinkyCommand,
   TestCommand,
+  LoveCommand,
 ];
 
 export class CommandProvider {
