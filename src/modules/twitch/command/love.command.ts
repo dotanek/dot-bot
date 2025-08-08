@@ -1,4 +1,3 @@
-import { CommandName } from '../enum/command-name.enum';
 import { ChatCommand } from '../value-objects/chat-command';
 import { TwitchContext } from '../value-objects/twitch-context';
 import { Command } from './command.base';
@@ -7,6 +6,9 @@ import { LoveAssignmentRepository } from '../repository/love-assignment.reposito
 import { LoveAssignment } from '../entity/love.entity';
 
 export class LoveCommand extends Command {
+  readonly name = 'love';
+  readonly aliases = ['love'];
+
   private readonly _loveAssignmentRepository = new LoveAssignmentRepository();
 
   async execute(
@@ -40,6 +42,4 @@ export class LoveCommand extends Command {
       `@${twitchContext.user.name}, there is ${assignment.value}% love dotane1Heart between you and ${targetArg}!`,
     );
   }
-
-  name = CommandName.LOVE;
 }

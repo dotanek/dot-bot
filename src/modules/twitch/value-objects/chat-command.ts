@@ -1,12 +1,10 @@
-import { CommandName } from '../enum/command-name.enum';
 import { ChatMessage } from './chat-message';
 import { CannotCreateChatCommandException } from '../exception/cannot-create-chat-command.exception';
-import { IsEnumValidator } from '../../../core/common/validator/is-enum.validator';
 import { InvalidArgumentException } from '../exception/invalid-argument.exception';
 
 export class ChatCommand {
   constructor(
-    readonly command: CommandName,
+    readonly command: string,
     private readonly args: string[],
   ) {}
 
@@ -43,10 +41,6 @@ export class ChatCommand {
 
     const [command, ...args] = chatMessage.content.slice(1).split(' ');
 
-    if (!new IsEnumValidator(CommandName).check(command)) {
-      throw new CannotCreateChatCommandException('invalid command name');
-    }
-
-    return new ChatCommand(<CommandName>command, args);
+    return new ChatCommand(command.toLowerCase(), args);
   }
 }
