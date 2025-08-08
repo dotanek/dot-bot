@@ -1,4 +1,3 @@
-import { CommandName } from '../enum/command-name.enum';
 import {
   Command,
   BanCommand,
@@ -15,11 +14,12 @@ import {
 } from '../command';
 import { CommandNotFoundTwitchException } from '../exception/command-not-found.twitch-exception';
 import { LoveCommand } from '../command/love.command';
+import { CommandInitException } from '../exception/command-init.exception';
 
 export const COMMAND_PROVIDER = 'command-provider';
 
 export interface ICommandProvider {
-  getBy(name: CommandName): Command;
+  getBy(name: string): Command;
 }
 
 const COMMANDS: { new (): Command }[] = [
@@ -37,22 +37,30 @@ const COMMANDS: { new (): Command }[] = [
   LoveCommand,
 ];
 
-export class CommandProvider {
-  private _commands: Record<string, Command> = {};
+export class CommandProvider implements ICommandProvider {
+  private commandHashMap: Record<string, Command> = {};
 
   constructor() {
     for (const Command of COMMANDS) {
       const instance = new Command();
 
-      this._commands[instance.name] = instance;
+      for (const alias of instance.aliases) {
+        if (this.commandHashMap[alias]) {
+          throw new CommandInitException(
+            `command with alias '${alias}' is already registered`,
+          );
+        }
+
+        this.commandHashMap[alias] = instance;
+      }
     }
   }
 
-  getBy(name: CommandName): Command {
-    const command = this._commands[name];
+  getBy(token: string): Command {
+    const command = this.commandHashMap[token];
 
     if (!command) {
-      throw new CommandNotFoundTwitchException(name);
+      throw new CommandNotFoundTwitchException(token);
     }
 
     return command;

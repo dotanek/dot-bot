@@ -1,9 +1,11 @@
-import { CommandName } from '../enum/command-name.enum';
 import { ChatCommand } from '../value-objects/chat-command';
 import { TwitchContext } from '../value-objects/twitch-context';
 import { Command } from './command.base';
 
 export class BanCommand extends Command {
+  readonly name = 'ban';
+  readonly aliases = ['ban'];
+
   async execute(
     chatCommand: ChatCommand,
     twitchContext: TwitchContext,
@@ -19,6 +21,4 @@ export class BanCommand extends Command {
       `${target} is now banned`,
     );
   }
-
-  name = CommandName.BAN;
 }

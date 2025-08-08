@@ -1,4 +1,3 @@
-import { CommandName } from '../enum/command-name.enum';
 import { ChatCommand } from '../value-objects/chat-command';
 import { TwitchContext } from '../value-objects/twitch-context';
 import { Command } from './command.base';
@@ -9,9 +8,9 @@ import {
   PP_RESPONSE_SERVICE,
   PPResponseService,
 } from '../services/pp-response.service';
-import { DependencyProvider } from '../../../core/dependency/dependency-provider';
-import { USER_SERVICE, UserService } from '../services/user.service';
+import { IUserService, USER_SERVICE } from '../services/user.service';
 import { UserNotFoundTwitchException } from '../exception/user-not-found.twitch-exception';
+import { DependencyProvider } from '../../../core/dependency/dependency-provider';
 
 const DEFAULT_RESPONSE = 'I know nothing about your pp';
 
@@ -20,11 +19,12 @@ enum SubCommand {
 }
 
 export class PPCommand extends Command {
-  name = CommandName.PP;
+  readonly name = 'pp';
+  readonly aliases = ['pp', 'benis', 'dingdong'];
 
   private readonly _ppResponseRepository: PPResponseRepository;
   private readonly _ppResponseService: PPResponseService;
-  private readonly _userService: UserService;
+  private readonly _userService: IUserService;
 
   constructor() {
     super();
@@ -60,7 +60,6 @@ export class PPCommand extends Command {
     twitchContext: TwitchContext,
     target?: string,
   ): Promise<void> {
-
     let user;
 
     if (!target) {
@@ -98,7 +97,7 @@ export class PPCommand extends Command {
     const contentArgs = chatCommant.getArgumentsRange(1);
 
     if (contentArgs.length === 0) {
-      throw new InvalidCommandArgumentException(this.name, 'content');
+      throw new InvalidCommandArgumentException('pp', 'content');
     }
 
     const response = PPResponse.create(contentArgs.join(' '), false);

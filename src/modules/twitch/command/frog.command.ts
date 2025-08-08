@@ -1,11 +1,11 @@
 import { Command } from './command.base';
-import { CommandName } from '../enum/command-name.enum';
 import { ChatCommand } from '../value-objects/chat-command';
 import { TwitchContext } from '../value-objects/twitch-context';
 import { People } from '../enum/people.enum';
 
 export class FrogCommand extends Command {
-  readonly name = CommandName.FROG;
+  readonly name = 'frog'
+  readonly aliases = ['frog'];
 
   private readonly responses: Record<string, () => string> = {
     [People.DOTANEK]: () => `you are always and forever 200% frog 🐸`,

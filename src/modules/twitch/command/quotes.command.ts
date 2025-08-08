@@ -1,11 +1,12 @@
 import { Command } from './command.base';
-import { CommandName } from '../enum/command-name.enum';
 import { ChatCommand } from '../value-objects/chat-command';
 import { TwitchContext } from '../value-objects/twitch-context';
 import { QuoteRepository } from '../repository/quote.repository';
 
 export class QuotesCommand extends Command {
-  readonly name = CommandName.QUOTES;
+  readonly name = 'quotes';
+  readonly aliases = ['quotes', 'quote'];
+
   private readonly _quoteRepository: QuoteRepository;
 
   constructor() {

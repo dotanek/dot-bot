@@ -1,5 +1,4 @@
 import { Command } from './command.base';
-import { CommandName } from '../enum/command-name.enum';
 import { ChatCommand } from '../value-objects/chat-command';
 import { TwitchContext } from '../value-objects/twitch-context';
 import { InvalidCommandArgumentException } from '../exception/invalid-command-argument.exception';
@@ -13,7 +12,12 @@ import { RandomGenerator } from '../../../core/random-generator';
 const POINTS_ARG_ALL = 'all';
 
 export class GambaCommand extends Command {
-  name = CommandName.GAMBA;
+  readonly name = 'gamba';
+  readonly aliases = [
+    'gamba',
+    'gamble',
+    '90percentofgamblersquitrightbeforetheyhititbig',
+  ];
 
   private readonly _userRepository = new UserRepository();
   private readonly _userService: IUserService =
@@ -29,12 +33,15 @@ export class GambaCommand extends Command {
       throw new InvalidCommandArgumentException(this.name, 'points');
     }
 
-    const user = await this._userService.findOrCreate(twitchContext.user.id, twitchContext.user.name);
+    const user = await this._userService.findOrCreate(
+      twitchContext.user.id,
+      twitchContext.user.name,
+    );
 
     if (user.getWealth() < 0) {
       await this._twitchClient.say(
         twitchContext.room.channel,
-        `@${twitchContext.user.name}, bruv you trying to bet with a negative balance? lmao broke`
+        `@${twitchContext.user.name}, bruv you trying to bet with a negative balance? lmao broke`,
       );
       return;
     }

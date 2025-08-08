@@ -1,5 +1,4 @@
 import { Command } from './command.base';
-import { CommandName } from '../enum/command-name.enum';
 import { ChatCommand } from '../value-objects/chat-command';
 import { TwitchContext } from '../value-objects/twitch-context';
 import { UserRepository } from '../repository/user.repository';
@@ -17,6 +16,9 @@ enum SubCommand {
 }
 
 export class PointsCommand extends Command {
+  readonly name = 'points';
+  readonly aliases = ['points'];
+
   private readonly _userService: UserService;
   private readonly _userRepository: UserRepository;
 
@@ -52,8 +54,6 @@ export class PointsCommand extends Command {
 
     await this._handleSet(chatCommand, twitchContext);
   }
-
-  name = CommandName.POINTS;
 
   private async _handleNoArg(twitchContext: TwitchContext): Promise<void> {
     const user = await this._userService.findOrCreate(
