@@ -22,6 +22,7 @@ const databaseConfig: DataSourceOptions = {
   entities: [Quote, User, Wealth, PPResponse, PpResponseAssignment, LoveAssignment],
   migrations: [`${__dirname}\\migration\\*.ts`],
   namingStrategy: new SnakeNamingStrategy(),
+  ssl: false,
 };
 
 console.log(__dirname + '\\' + 'migration');
