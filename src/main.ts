@@ -2,8 +2,8 @@ import { Application } from './application/application';
 
 const application = Application.create();
 application.initialize().catch((exception: unknown) => {
-  console.error(exception)
-  process.exit(1)
+  console.error(exception);
+  process.exit(1);
 });
 
 // Keeps process alive
