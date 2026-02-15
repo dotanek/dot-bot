@@ -22,7 +22,7 @@ export interface ICommandProvider {
   getBy(name: string): Command;
 }
 
-const COMMANDS: { new (): Command }[] = [
+const COMMANDS: { new (...args: never[]): Command }[] = [
   BanCommand,
   DiarrheaCommand,
   FrogCommand,

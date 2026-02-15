@@ -25,6 +25,4 @@ const databaseConfig: DataSourceOptions = {
   ssl: false,
 };
 
-console.log(__dirname + '\\' + 'migration');
-
 export default databaseConfig;
