@@ -15,7 +15,6 @@ import {
 import { CommandNotFoundTwitchException } from '../exception/command-not-found.twitch-exception';
 import { LoveCommand } from '../command/love.command';
 import { CommandInitException } from '../exception/command-init.exception';
-import { DependencyProvider } from '../../../core/dependency/dependency-provider';
 
 export const COMMAND_PROVIDER = 'command-provider';
 
