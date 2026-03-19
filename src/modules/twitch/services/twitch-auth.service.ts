@@ -10,7 +10,7 @@ export class TwitchAuthService {
     const redirectUri = config.twitch.oauth.redirectUri;
     const grantType = 'authorization_code';
 
-    const response = await new Promise<TwitchAuthResponseModel>((resolve) => {
+    await new Promise<TwitchAuthResponseModel>((resolve) => {
       fetch('https://id.twitch.tv/oauth2/token', {
         method: 'POST',
         body: new URLSearchParams({
@@ -46,7 +46,7 @@ export class TwitchAuthService {
     const grantType = 'refresh_token';
     const refreshToken = '';
 
-    const response = await new Promise<TwitchAuthResponseModel>((resolve) => {
+    await new Promise<TwitchAuthResponseModel>((resolve) => {
       fetch('https://id.twitch.tv/oauth2/token', {
         method: 'POST',
         body: new URLSearchParams({

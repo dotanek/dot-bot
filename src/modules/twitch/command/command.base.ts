@@ -2,7 +2,6 @@ import { ChatCommand } from '../value-objects/chat-command';
 import { TwitchContext } from '../value-objects/twitch-context';
 import { TwitchClient } from '../types/twitch-client';
 import { DependencyProvider } from '../../../core/dependency/dependency-provider';
-import { TWITCH_CLIENT } from '../const/twitch-client.key';
 import { TWITCH_SERVICE, TwitchService } from '../services/twitch.service';
 
 export abstract class Command {

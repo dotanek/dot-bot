@@ -1,4 +1,4 @@
-import { ChatUserstate, Client } from 'tmi.js';
+import { ChatUserstate } from 'tmi.js';
 import { TwitchException } from '../exception/twitch.exception';
 import { TwitchClient } from '../types/twitch-client';
 import { UnableToConnectException } from '../exception/unable-to-connect.exception';
