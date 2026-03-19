@@ -3,15 +3,20 @@ import { TwitchContext } from '../value-objects/twitch-context';
 import { TwitchClient } from '../types/twitch-client';
 import { DependencyProvider } from '../../../core/dependency/dependency-provider';
 import { TWITCH_CLIENT } from '../const/twitch-client.key';
+import { TWITCH_SERVICE, TwitchService } from '../services/twitch.service';
 
 export abstract class Command {
   abstract readonly name: string;
   abstract readonly aliases: string[];
 
-  protected readonly _twitchClient: TwitchClient;
+  private readonly twitchService: TwitchService;
+
+  protected get twitchClient(): TwitchClient {
+    return this.twitchService.getClient();
+  }
 
   constructor() {
-    this._twitchClient = DependencyProvider.getInstance().get(TWITCH_CLIENT);
+    this.twitchService = DependencyProvider.getInstance().get(TWITCH_SERVICE);
   }
 
   abstract execute(
