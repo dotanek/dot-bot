@@ -1,8 +1,6 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class CreatePPResponseAssignmentTable1722019203868
-  implements MigrationInterface
-{
+export class CreatePPResponseAssignmentTable1722019203868 implements MigrationInterface {
   name = 'CreatePPResponseAssignmentTable1722019203868';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
