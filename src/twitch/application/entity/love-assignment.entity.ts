@@ -3,7 +3,7 @@ import { TWITCH_SCHEMA } from './schema/twitch.schema';
 import { v4 } from 'uuid';
 
 import { DateProvider } from '../../../common/date-provider';
-import { RandomGenerator } from '../../../common/random-generator';
+import { RandomProvider } from '../../../common/random-provider';
 
 @Entity({ name: 'love_assignment', schema: TWITCH_SCHEMA })
 export class LoveAssignment {
@@ -37,13 +37,11 @@ export class LoveAssignment {
   date: Date;
 
   isExpired(): boolean {
-    return (
-      this.date.getDate() !== DateProvider.getInstance().getNow().getDate()
-    );
+    return this.date.getDate() !== DateProvider.getNow().getDate();
   }
 
   refresh(): void {
-    this.date = DateProvider.getInstance().getNow();
+    this.date = DateProvider.getNow();
     this.value = getLoveValue();
   }
 
@@ -53,13 +51,19 @@ export class LoveAssignment {
       lover,
       loved,
       getLoveValue(),
-      DateProvider.getInstance().getNow(),
+      DateProvider.getNow(),
     );
   }
 }
 
 function getLoveValue(): number {
-  const value = +RandomGenerator.getInstance().getNumberV2(50, 100).toFixed(0);
+  const rangeBottom = 50;
+  const rangeTop = 100;
+  const integerTrue = true;
+
+  const value = Number(
+    RandomProvider.getNumber(rangeBottom, rangeTop, integerTrue),
+  );
 
   if (value === 50) {
     return -999;

@@ -1,31 +1,41 @@
-import { Command } from './command.base';
-import { ChatCommand } from '../value-objects/chat-command';
-import { TwitchContext } from '../value-objects/twitch-context';
-import { People } from '../enum/people.enum';
+import {
+  ChatCommand,
+  ChatCommandHandlerBase,
+} from '../../domain/base/chat-command';
+import { ChatCommandHandler } from '../../domain/decorator/chat-command-handler.decorator';
+import { People } from '../../domain/enum/people.enum';
+import { TwitchChatService } from '../service/twitch-chat-service';
+import { RandomProvider } from '../../../common/random-provider';
 
-export class FrogCommand extends Command {
-  readonly name = 'frog'
-  readonly aliases = ['frog'];
+@ChatCommandHandler({ name: 'frog' })
+export class FrogCommand extends ChatCommandHandlerBase {
+  constructor(chatService: TwitchChatService) {
+    super(chatService);
+  }
 
-  private readonly responses: Record<string, () => string> = {
-    [People.DOTANEK]: () => `you are always and forever 200% frog 🐸`,
-    [People.CHILLED]: () => `you are 150% frog (are you cheating?!) 🐸`,
-    [People.TOLL]: () => `sir you are a raven >:c`,
-    [People.KATAETO]: () => `you are ${this.getRandomPercent()+50}% frog today 🐸`,
-    default: () => `you are ${this.getRandomPercent()}% frog today 🐸`,
-  };
+  async executeLegacy(command: ChatCommand): Promise<void> {
+    const userName = command.userName;
+    const customResponse = this._customResponses[userName];
 
-  async execute(chatCommand: ChatCommand, twitchContext: TwitchContext): Promise<void> {
-    const username = twitchContext.user.name;
-    const response = (this.responses[username] || this.responses.default)();
+    if (customResponse) {
+      await this._send(command.channelName, `${userName}, ${customResponse}`);
 
-    await this.twitchClient.say(
-      twitchContext.room.channel,
-      `${username}, ${response}`,
+      return;
+    }
+
+    const rangeBottom = 0;
+    const rangeTop = 100;
+    const integerTrue = true;
+
+    await this._send(
+      command.channelName,
+      `you are ${RandomProvider.getNumber(rangeBottom, rangeTop, integerTrue)}% frog today 🐸`,
     );
   }
 
-  private getRandomPercent(): number {
-    return Math.floor(Math.random() * 100);
-  }
+  private readonly _customResponses: Record<string, string> = {
+    [People.DOTANEK]: 'you are always and forever 200% frog 🐸',
+    [People.SYLVENE]: 'you are 150% frog (are you cheating?!) 🐸',
+    [People.TOLL]: 'sir you are a raven >:c',
+  };
 }

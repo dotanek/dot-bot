@@ -7,11 +7,10 @@ export class InvalidCommandArgumentException
 {
   readonly chatMessage: string;
 
-  constructor(commandName: string, argument: string, reason?: string) {
-    super(`command '${commandName}' argument '${argument}' invalid`);
+  constructor(reason: string, argument?: string) {
+    const message = `invalid command argument ${argument ? "'" + argument + "'" : ''}: ${reason}`;
+    super(message);
 
-    this.chatMessage = `invalid argument '${argument}'${
-      reason ? ' - ' + reason : ''
-    }`;
+    this.chatMessage = message;
   }
 }

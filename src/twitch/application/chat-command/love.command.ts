@@ -1,45 +1,55 @@
-import { ChatCommand } from '../value-objects/chat-command';
-import { TwitchContext } from '../value-objects/twitch-context';
-import { Command } from './command.base';
+import {
+  ChatCommand,
+  ChatCommandHandlerBase,
+} from '../../domain/base/chat-command';
+import { ChatCommandHandler } from '../../domain/decorator/chat-command-handler.decorator';
+import { LoveAssignment } from '../entity/love-assignment.entity';
 import { InvalidCommandArgumentException } from '../exception/invalid-command-argument.exception';
 import { LoveAssignmentRepository } from '../repository/love-assignment.repository';
-import { LoveAssignment } from '../entity/love.entity';
+import { TwitchChatService } from '../service/twitch-chat-service';
 
-export class LoveCommand extends Command {
-  readonly name = 'love';
-  readonly aliases = ['love'];
+@ChatCommandHandler({ name: 'love' })
+export class LoveCommand extends ChatCommandHandlerBase {
+  constructor(
+    chatService: TwitchChatService,
+    private readonly _assignmentRepository: LoveAssignmentRepository,
+  ) {
+    super(chatService);
+  }
 
-  private readonly _loveAssignmentRepository = new LoveAssignmentRepository();
+  async executeLegacy(command: ChatCommand): Promise<void> {
+    const userName = command.userName.toLowerCase();
+    const targetName = command.getArgument(0)?.replace('@', '').toLowerCase();
 
-  async execute(
-    chatCommand: ChatCommand,
-    twitchContext: TwitchContext,
-  ): Promise<void> {
-    if (!chatCommand.hasArguments()) {
-      throw new InvalidCommandArgumentException(this.name, 'target');
+    if (!targetName) {
+      throw new InvalidCommandArgumentException('love', 'target');
     }
 
-    const userName = twitchContext.user.name.toLowerCase();
-    const targetArg = chatCommand.getArgumentsRange(0).join(' ').toLowerCase();
+    if (targetName === userName) {
+      await this._send(
+        command.channelName,
+        'Are you trying to love yourself you lil freak?',
+      );
 
-    let assignment = await this._loveAssignmentRepository.findOneBy(
+      return;
+    }
+
+    let assignment = await this._assignmentRepository.findOneBy(
       userName,
-      targetArg,
+      targetName,
     );
 
     if (!assignment) {
-      assignment = LoveAssignment.create(userName, targetArg);
-    }
-
-    if (assignment.isExpired()) {
+      assignment = LoveAssignment.create(userName, targetName);
+    } else if (assignment.isExpired()) {
       assignment.refresh();
     }
 
-    await this._loveAssignmentRepository.save(assignment);
+    await this._assignmentRepository.save(assignment);
 
-    await this.twitchClient.say(
-      twitchContext.room.channel,
-      `@${twitchContext.user.name}, there is ${assignment.value}% love dotane1Heart between you and ${targetArg}!`,
+    await this._chatService.sendMessage(
+      command.channelName,
+      `@${command.userName}, there is ${assignment.value}% love dotane1Heart between you and ${targetName}!`,
     );
   }
 }

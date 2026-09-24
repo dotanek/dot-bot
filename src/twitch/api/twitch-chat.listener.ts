@@ -91,6 +91,7 @@ export class TwitchChatListener implements OnModuleInit {
     } catch (exception: unknown) {
       if (exception instanceof TwitchException) {
         this._logger.error(exception.message);
+
         if (isChattable(exception)) {
           await this._chat.sendMessage(channelName, exception.chatMessage);
         }

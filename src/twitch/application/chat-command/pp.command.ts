@@ -1,111 +1,111 @@
-import { ChatCommand } from '../value-objects/chat-command';
-import { TwitchContext } from '../value-objects/twitch-context';
-import { Command } from './command.base';
-import { PPResponseRepository } from '../repository/pp-response.repository';
+import {
+  ChatCommand,
+  ChatCommandHandlerBase,
+} from '../../domain/base/chat-command';
+import { ChatCommandHandler } from '../../domain/decorator/chat-command-handler.decorator';
 import { PPResponse } from '../entity/pp-response.entity';
 import { InvalidCommandArgumentException } from '../exception/invalid-command-argument.exception';
-import {
-  PP_RESPONSE_SERVICE,
-  PPResponseService,
-} from '../services/pp-response.service';
-import { IUserService, USER_SERVICE } from '../services/user.service';
 import { UserNotFoundTwitchException } from '../exception/user-not-found.twitch-exception';
-import { DependencyProvider } from '../../../core/dependency/dependency-provider';
-
-const DEFAULT_RESPONSE = 'I know nothing about your pp';
+import { PPResponseRepository } from '../repository/pp-response.repository';
+import { PPResponseService } from '../service/pp-response.service';
+import { TwitchChatService } from '../service/twitch-chat-service';
+import { UserService } from '../service/user.service';
 
 enum SubCommand {
   ADD = 'add',
 }
 
-export class PPCommand extends Command {
-  readonly name = 'pp';
-  readonly aliases = ['pp', 'benis', 'dingdong'];
-
-  private readonly _ppResponseRepository: PPResponseRepository;
-  private readonly _ppResponseService: PPResponseService;
-  private readonly _userService: IUserService;
-
-  constructor() {
-    super();
-    this._ppResponseRepository = new PPResponseRepository();
-    this._userService = DependencyProvider.getInstance().get(USER_SERVICE);
-    this._ppResponseService =
-      DependencyProvider.getInstance().get(PP_RESPONSE_SERVICE);
+@ChatCommandHandler({
+  name: 'pp',
+  aliases: ['penis', 'benis', 'shlong', 'dingdong'],
+})
+export class PPCommand extends ChatCommandHandlerBase {
+  constructor(
+    chatService: TwitchChatService,
+    private readonly _userService: UserService,
+    private readonly _ppResponseService: PPResponseService,
+    private readonly _ppResponseRepository: PPResponseRepository,
+  ) {
+    super(chatService);
   }
 
-  async execute(
-    chatCommand: ChatCommand,
-    twitchContext: TwitchContext,
-  ): Promise<void> {
-    // TODO assign response to a static name?
+  async executeLegacy(command: ChatCommand): Promise<void> {
+    const argumentStr = command.getArgument(0);
 
-    if (!chatCommand.hasArguments()) {
-      return await this._handleShow(chatCommand, twitchContext);
-    }
-
-    if (chatCommand.getArgument(0) === SubCommand.ADD) {
-      return await this._handleAdd(chatCommand, twitchContext);
-    }
-
-    return await this._handleShow(
-      chatCommand,
-      twitchContext,
-      chatCommand.getArgument(0)!.toLowerCase(),
-    );
-  }
-
-  async _handleShow(
-    chatCommand: ChatCommand,
-    twitchContext: TwitchContext,
-    target?: string,
-  ): Promise<void> {
-    let user;
-
-    if (!target) {
-      user = await this._userService.findOrCreate(
-        twitchContext.user.id,
-        twitchContext.user.name,
-      );
+    if (argumentStr === SubCommand.ADD) {
+      await this._handleAdd(command);
     } else {
-      user = await this._userService.findByName(target);
-      if (!user) {
-        throw new UserNotFoundTwitchException(target);
-      }
+      await this._handleShow(command);
     }
+  }
 
-    let response = await this._ppResponseService.findAssigned(user.id);
+  private async _handleShow(command: ChatCommand): Promise<void> {
+    const targetName = command.getArgument(1);
+
+    if (targetName) {
+      await this._handleShowTarget(targetName, command);
+    } else {
+      await this._handleShowSelf(command);
+    }
+  }
+
+  private async _handleShowSelf(command: ChatCommand): Promise<void> {
+    let response = await this._ppResponseService.findAssigned(command.userId);
 
     if (!response) {
-      response = await this._ppResponseService.findRandomVerified();
-
-      if (response) {
-        await this._ppResponseService.assign(user.id, response.id);
-      }
+      response = await this._ppResponseService.assignRandom(command.userId);
     }
 
-    await this.twitchClient.say(
-      twitchContext.room.channel,
-      `@${twitchContext.user.name}, ${response?.content ?? DEFAULT_RESPONSE}`,
-    );
+    let responseStr = `@${command.userName}, `;
+
+    if (response) {
+      responseStr += response.content;
+    } else {
+      responseStr += 'I know nothing about your pp :c';
+    }
+    await this._send(command.channelName, responseStr);
   }
 
-  async _handleAdd(
-    chatCommant: ChatCommand,
-    twitchContext: TwitchContext,
+  private async _handleShowTarget(
+    targetName: string,
+    command: ChatCommand,
   ): Promise<void> {
-    const contentArgs = chatCommant.getArgumentsRange(1);
+    const targetUser = await this._userService.findByName(targetName);
 
-    if (contentArgs.length === 0) {
-      throw new InvalidCommandArgumentException('pp', 'content');
+    if (!targetUser) {
+      throw new UserNotFoundTwitchException(targetName);
     }
 
-    const response = PPResponse.create(contentArgs.join(' '), false);
+    let response = await this._ppResponseService.findAssigned(targetUser.id);
+
+    if (!response) {
+      response = await this._ppResponseService.assignRandom(targetUser.id);
+    }
+
+    let responseStr = `@${command.userName}, `;
+
+    if (response) {
+      responseStr += `${targetName}s pp is blah blah blah`;
+    } else {
+      responseStr += `I know nothing about ${targetName} pp :c`;
+    }
+
+    await this._send(command.channelName, responseStr);
+  }
+
+  async _handleAdd(command: ChatCommand): Promise<void> {
+    const contentArgs = command.getArgumentsRange(1);
+
+    if (contentArgs.length === 0) {
+      throw new InvalidCommandArgumentException('quote cotnent is missing');
+    }
+
+    const response = PPResponse.create(contentArgs.join(' ').trim());
     await this._ppResponseRepository.save(response);
 
-    await this.twitchClient.say(
-      twitchContext.room.channel,
-      `@${twitchContext.user.name}, pp response suggested (awaiting approval)`,
+    await this._send(
+      command.channelName,
+      `@${command.userName}, pp response suggested (awaiting approval)`,
     );
   }
 }

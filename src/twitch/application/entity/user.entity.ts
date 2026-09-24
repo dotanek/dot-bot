@@ -48,7 +48,7 @@ export class User {
     this.wealth.set(value);
   }
 
-  static createFor(externalId: string, username: string): User {
+  static create(externalId: string, username: string): User {
     const id = v4();
 
     return new User(id, externalId, username, Wealth.create(id));

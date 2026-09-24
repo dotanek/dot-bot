@@ -1,23 +1,20 @@
-import { ChatCommand } from '../value-objects/chat-command';
-import { TwitchContext } from '../value-objects/twitch-context';
-import { Command } from './command.base';
+import {
+  ChatCommand,
+  ChatCommandHandlerBase,
+} from '../../domain/base/chat-command';
+import { ChatCommandHandler } from '../../domain/decorator/chat-command-handler.decorator';
+import { TwitchChatService } from '../service/twitch-chat-service';
 
-export class BanCommand extends Command {
-  readonly name = 'ban';
-  readonly aliases = ['ban'];
+@ChatCommandHandler({ name: 'ban', aliases: ['banish', 'remove', 'fuckoff'] })
+export class BanCommand extends ChatCommandHandlerBase {
+  constructor(chatService: TwitchChatService) {
+    super(chatService);
+  }
 
-  async execute(
-    chatCommand: ChatCommand,
-    twitchContext: TwitchContext,
-  ): Promise<void> {
-    let target = chatCommand.getArgument(0);
-
-    if (!target) {
-      target = twitchContext.user.name;
-    }
-
-    await this.twitchClient.say(
-      twitchContext.room.channel,
+  async executeLegacy(command: ChatCommand): Promise<void> {
+    const target = command.getArgument(0) ?? command.userName;
+    await this._chatService.sendMessage(
+      command.channelName,
       `${target} is now banned`,
     );
   }

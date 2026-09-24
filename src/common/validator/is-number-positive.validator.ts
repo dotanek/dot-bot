@@ -1,11 +1,14 @@
 import { IsNumberValidator } from './is-number.validator';
 import { IValidator } from '../interface/validator.interface';
 
-export class IsPositiveNumberValidator
+/**
+ * Does not include zero
+ */
+export class IsNumberPositiveValidator
   extends IsNumberValidator
   implements IValidator<string>
 {
   check(value: string): boolean {
-    return super.check(value) && +value > 0;
+    return super.check(value) && Number(value) > 0;
   }
 }

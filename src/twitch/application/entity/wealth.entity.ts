@@ -25,7 +25,7 @@ export class Wealth {
 
   @OneToOne(() => User, (user) => user.wealth)
   @JoinColumn({
-    name: 'userId',
+    name: 'user_id',
     referencedColumnName: 'id',
   })
   user!: User;

@@ -15,8 +15,47 @@ import { TwitchController } from './api/twitch.controller';
 import { ChatCommandRegistry } from './application/registry/chat-command.registry';
 import { DiscoveryModule } from '@nestjs/core';
 import { TestChatCommandHandler } from './application/chat-command/test.chat-command';
+import {
+  BanCommand,
+  DiarrheaCommand,
+  FrogCommand,
+  GambaCommand,
+  GuguCommand,
+  LoveCommand,
+  LurkCommand,
+  PointsCommand,
+  PPCommand,
+  StinkyCommand,
+} from './application/chat-command';
+import { LoveAssignmentRepository } from './application/repository/love-assignment.repository';
+import { PPResponseAssignmentRepository } from './application/repository/pp-response-assignment.repository';
+import { PPResponseRepository } from './application/repository/pp-response.repository';
+import { UserRepository } from './application/repository/user.repository';
+import { UserService } from './application/service/user.service';
+import { PPResponseService } from './application/service/pp-response.service';
 
-const CHAT_COMMAND_HANDLERS = [TestChatCommandHandler];
+const CHAT_COMMAND_REPOSITORIES = [
+  LoveAssignmentRepository,
+  PPResponseAssignmentRepository,
+  PPResponseRepository,
+  UserRepository,
+];
+
+const CHAT_COMMAND_SERVICES = [UserService, PPResponseService];
+
+const CHAT_COMMAND_HANDLERS = [
+  TestChatCommandHandler,
+  BanCommand,
+  DiarrheaCommand,
+  FrogCommand,
+  GambaCommand,
+  GuguCommand,
+  LoveCommand,
+  LurkCommand,
+  PointsCommand,
+  PPCommand,
+  StinkyCommand,
+];
 
 @Module({
   imports: [
@@ -51,6 +90,8 @@ const CHAT_COMMAND_HANDLERS = [TestChatCommandHandler];
     },
     ChatCommandRegistry,
     TwitchChatListener,
+    ...CHAT_COMMAND_REPOSITORIES,
+    ...CHAT_COMMAND_SERVICES,
     ...CHAT_COMMAND_HANDLERS,
   ],
   controllers: [TwitchController],

@@ -1,15 +1,20 @@
-import { Command } from './command.base';
-import { TwitchContext } from '../value-objects/twitch-context';
-import { ChatCommand } from '../value-objects/chat-command';
+import {
+  ChatCommand,
+  ChatCommandHandlerBase,
+} from '../../domain/base/chat-command';
+import { ChatCommandHandler } from '../../domain/decorator/chat-command-handler.decorator';
+import { TwitchChatService } from '../service/twitch-chat-service';
 
-export class LurkCommand extends Command {
-  readonly name = 'lurk';
-  readonly aliases = ['lurk'];
+@ChatCommandHandler({ name: 'lurk' })
+export class LurkCommand extends ChatCommandHandlerBase {
+  constructor(chatService: TwitchChatService) {
+    super(chatService);
+  }
 
-  async execute(command: ChatCommand, context: TwitchContext): Promise<void> {
-    await this.twitchClient.say(
-      context.room.channel,
-      `${context.user.name} is chillin in the pond, thank you for the lurk!`,
+  async executeLegacy(command: ChatCommand): Promise<void> {
+    await this._chatService.sendMessage(
+      command.channelName,
+      `${command.userName} is chillin in the pond, thank you for the lurk!`,
     );
   }
 }

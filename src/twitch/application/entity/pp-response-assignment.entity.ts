@@ -1,6 +1,7 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm';
 import { TWITCH_SCHEMA } from './schema/twitch.schema';
 import { DateProvider } from '../../../common/date-provider';
+import { PPResponse } from './pp-response.entity';
 
 @Entity('pp_response_assignment', { schema: TWITCH_SCHEMA })
 export class PpResponseAssignment {
@@ -20,16 +21,15 @@ export class PpResponseAssignment {
   date: Date;
 
   isExpired(): boolean {
-    return (
-      this.date.getDate() !== DateProvider.getInstance().getNow().getDate()
-    );
+    return this.date.getDate() !== DateProvider.getNow().getDate();
+  }
+
+  refresh(response: PPResponse): void {
+    this.responseId = response.id;
+    this.date = DateProvider.getNow();
   }
 
   static create(userId: string, responseId: string): PpResponseAssignment {
-    return new PpResponseAssignment(
-      userId,
-      responseId,
-      DateProvider.getInstance().getNow(),
-    );
+    return new PpResponseAssignment(userId, responseId, DateProvider.getNow());
   }
 }

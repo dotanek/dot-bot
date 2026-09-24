@@ -1,112 +1,111 @@
-import { Command } from './command.base';
-import { ChatCommand } from '../value-objects/chat-command';
-import { TwitchContext } from '../value-objects/twitch-context';
+import {
+  ChatCommand,
+  ChatCommandHandlerBase,
+} from '../../domain/base/chat-command';
+import { ChatCommandHandler } from '../../domain/decorator/chat-command-handler.decorator';
 import { InvalidCommandArgumentException } from '../exception/invalid-command-argument.exception';
+import { TwitchChatService } from '../service/twitch-chat-service';
+import { UserService } from '../service/user.service';
+import { RandomProvider } from '../../../common/random-provider';
+import { IsNumberPositiveValidator } from '../../../common/validator/is-number-positive.validator';
+import { IsNumberRangeValidator } from '../../../common/validator/is-number-range.validator';
 import { UserRepository } from '../repository/user.repository';
-import { IUserService, USER_SERVICE } from '../services/user.service';
-import { DependencyProvider } from '../../../core/dependency/dependency-provider';
-import { IsPercentValidator } from '../../../core/common/validator/is-percent.validator';
-import { IsPositiveNumberValidator } from '../../../core/common/validator/is-positive-number.validator';
-import { RandomGenerator } from '../../../core/random-generator';
 
 const POINTS_ARG_ALL = 'all';
 
-export class GambaCommand extends Command {
-  readonly name = 'gamba';
-  readonly aliases = [
-    'gamba',
-    'gamble',
-    '90percentofgamblersquitrightbeforetheyhititbig',
-  ];
+@ChatCommandHandler({
+  name: 'gamba',
+  aliases: ['gamble', '90percentofgamblersquitrightbeforetheyhititbig'],
+})
+export class GambaCommand extends ChatCommandHandlerBase {
+  constructor(
+    chatService: TwitchChatService,
+    private readonly _userService: UserService,
+    private readonly _userRepository: UserRepository,
+  ) {
+    super(chatService);
+  }
 
-  private readonly _userRepository = new UserRepository();
-  private readonly _userService: IUserService =
-    DependencyProvider.getInstance().get(USER_SERVICE);
-
-  async execute(
-    chatCommand: ChatCommand,
-    twitchContext: TwitchContext,
-  ): Promise<void> {
-    const pointsArg = chatCommand.getArgument(0);
+  async executeLegacy(command: ChatCommand): Promise<void> {
+    const userId = command.messageCtx.userInfo.userId;
+    const { userName, channelName } = command;
+    const pointsArg = command.getArgument(0);
 
     if (!pointsArg) {
-      throw new InvalidCommandArgumentException(this.name, 'points');
+      throw new InvalidCommandArgumentException('argument is missing');
     }
 
-    const user = await this._userService.findOrCreate(
-      twitchContext.user.id,
-      twitchContext.user.name,
-    );
+    const user = await this._userService.findOrCreate(userId, userName);
 
-    if (user.getWealth() < 0) {
-      await this.twitchClient.say(
-        twitchContext.room.channel,
-        `@${twitchContext.user.name}, bruv you trying to bet with a negative balance? lmao broke`,
+    if (user.getWealth() <= 0) {
+      await this._send(
+        channelName,
+        `@${userName}, lmao you are literally broke`,
       );
+
       return;
     }
 
-    const points = await this.getValue(pointsArg, user.getWealth());
+    const betPoints = this.getValue(pointsArg, user.getWealth());
 
-    const isWin = RandomGenerator.getInstance().getNumber() > 0;
+    const isWin = RandomProvider.getBoolean();
 
     if (isWin) {
-      user.increaseWealth(points);
+      user.increaseWealth(betPoints);
     } else {
-      user.decreaseWealth(points);
+      user.decreaseWealth(betPoints);
     }
 
     await this._userRepository.save(user);
 
-    await this.twitchClient.say(
-      twitchContext.room.channel,
-      `@${twitchContext.user.name} you bet ${points} points and ${
+    await this._send(
+      channelName,
+      `@${userName} you bet ${betPoints} points and ${
         isWin ? 'won!' : 'lost lmao gottem KEKW'
       } [${user.getWealth()} points]`,
     );
   }
 
-  private async getValue(
-    pointsArg: string,
-    userPoints: number,
-  ): Promise<number> {
-    // TODO add random gamba
-
+  getValue(pointsArg: string, userPoints: number): number {
     const stringPoints = pointsArg.slice();
 
     if (pointsArg.toLowerCase() === POINTS_ARG_ALL) {
       return userPoints;
     }
 
-    if (pointsArg.includes('%')) {
+    if (pointsArg.endsWith('%')) {
       return this._getPercent(stringPoints.slice(0, -1), userPoints);
     }
 
-    if (!new IsPositiveNumberValidator().check(stringPoints)) {
+    if (!new IsNumberPositiveValidator().check(stringPoints)) {
       throw new InvalidCommandArgumentException(
-        this.name,
-        pointsArg,
         'not a positive number',
+        stringPoints,
       );
     }
 
     return this._getSpecified(pointsArg, userPoints);
   }
 
-  private _getPercent(value: string, points: number): number {
-    if (!new IsPercentValidator().check(value)) {
+  private _getPercent(valueStr: string, points: number): number {
+    const rangePercentBottom = 0;
+    const rangePercentTop = 100;
+    if (
+      !new IsNumberRangeValidator(rangePercentBottom, rangePercentTop).check(
+        valueStr,
+      )
+    ) {
       throw new InvalidCommandArgumentException(
-        this.name,
-        value,
         'not a valid percent',
+        valueStr,
       );
     }
 
-    return Math.floor(+value * (points / 100));
+    return Math.floor(Number(valueStr) * (points / 100));
   }
 
   private _getSpecified(value: string, points: number): number {
-    const parsedValue = +value;
+    const parsedValue = Number(value);
 
     if (parsedValue > points) {
       return points;

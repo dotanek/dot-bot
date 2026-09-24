@@ -1,6 +1,5 @@
 export enum People {
   DOTANEK = 'dotanek',
-  CHILLED = 'chilledsong',
+  SYLVENE = 'sylvenexr',
   TOLL = 'tolltheravens',
-  KATAETO = 'kataeto',
 }

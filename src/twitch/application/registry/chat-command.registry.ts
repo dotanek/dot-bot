@@ -63,7 +63,7 @@ export class ChatCommandRegistry implements OnModuleInit {
   private _implementsInterface(
     instance: unknown,
   ): instance is ChatCommandHandlerBase {
-    if (typeof (instance as ChatCommandHandlerBase).execute !== 'function') {
+    if (typeof (instance as ChatCommandHandlerBase).executeLegacy !== 'function') {
       return false;
     }
 
