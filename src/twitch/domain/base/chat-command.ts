@@ -82,9 +82,6 @@ export abstract class ChatCommandHandlerBase {
 
     let currentNode = this._commandTree;
 
-    console.log('node: ', currentNode);
-    console.log('remaining args: ', remainingArgs);
-
     while (remainingArgs.length > 0 && currentNode.children) {
       const nextNode = currentNode.children[remainingArgs.shift()!];
 
@@ -92,8 +89,6 @@ export abstract class ChatCommandHandlerBase {
         currentNode = nextNode;
       }
     }
-
-    console.log('node: ', currentNode);
 
     await currentNode.handler(command, remainingArgs);
   }
