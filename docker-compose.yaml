@@ -5,10 +5,7 @@ services:
     env_file:
       - .env
     environment:
-      - NODE_ENV=production
-      - TWITCH_USERNAME=${TWITCH_USERNAME}
-      - TWITCH_TOKEN=${TWITCH_TOKEN}
-      - DATABASE_HOST=database
+      - DATABASE__HOST=database
     ports:
       - 5000:5000
       - 5342:5432

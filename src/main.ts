@@ -1,10 +1,15 @@
-import { Application } from './application/application';
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+import { Logger } from '@nestjs/common';
 
-const application = Application.create();
-application.initialize().catch((exception: unknown) => {
-  console.error(exception);
-  process.exit(1);
-});
+async function bootstrap() {
+  try {
+    const app = await NestFactory.create(AppModule);
 
-// Keeps process alive
-setInterval(function () {}, 1000 * 60);
+    await app.listen(process.env.PORT ?? 3000);
+  } catch (exception: unknown) {
+    Logger.error(exception);
+  }
+}
+
+void bootstrap();
