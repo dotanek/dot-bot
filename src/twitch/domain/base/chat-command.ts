@@ -50,7 +50,7 @@ export class ChatCommand {
 
 export type CommandHandlerMethod = (
   command: ChatCommand,
-  args?: string[],
+  remainingArgs: string[],
 ) => Promise<void> | void;
 
 type CommandTree = {
@@ -62,31 +62,26 @@ type CommandTree = {
 export abstract class ChatCommandHandlerBase {
   protected readonly _logger: Logger = new Logger(ChatCommandHandlerBase.name);
 
-  protected _commandTree?: CommandTree;
+  protected abstract _commandTree: CommandTree;
 
   constructor(protected readonly _chatService: TwitchChatService) {}
-
-  abstract executeLegacy(command: ChatCommand): Promise<void> | void;
 
   /**
    * Searches command tree for the best suited handler and executes it.
    */
   async execute(command: ChatCommand): Promise<void> {
-    if (!this._commandTree) {
-      await this.executeLegacy(command);
-
-      return;
-    }
-
     const remainingArgs = command.arguments;
 
     let currentNode = this._commandTree;
 
     while (remainingArgs.length > 0 && currentNode.children) {
-      const nextNode = currentNode.children[remainingArgs.shift()!];
+      const nextNode = currentNode.children[remainingArgs[0]];
 
       if (nextNode) {
+        remainingArgs.shift();
         currentNode = nextNode;
+      } else {
+        break;
       }
     }
 

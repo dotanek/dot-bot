@@ -9,33 +9,51 @@ import { RandomProvider } from '../../../common/random-provider';
 
 @ChatCommandHandler({ name: 'frog' })
 export class FrogCommand extends ChatCommandHandlerBase {
+  protected _commandTree = {
+    handler: (command: ChatCommand, remainingArgs: string[]) =>
+      this._handle(command, remainingArgs),
+  };
+
   constructor(chatService: TwitchChatService) {
     super(chatService);
   }
 
-  async executeLegacy(command: ChatCommand): Promise<void> {
+  private async _handle(
+    command: ChatCommand,
+    remainingArgs: string[],
+  ): Promise<void> {
     const userName = command.userName;
-    const customResponse = this._customResponses[userName];
+
+    const targetArg = remainingArgs[0]?.replaceAll('@', '');
+
+    let responseStr = `@${userName},`;
+
+    if (targetArg) {
+      responseStr += ` ${targetArg} is ${this._getResponse(targetArg)}`;
+    } else {
+      responseStr += ` you are ${this._getResponse(userName)}`;
+    }
+
+    await this._send(command.channelName, responseStr);
+  }
+
+  private _getResponse(targetName: string): string {
+    const customResponse = this._customResponses[targetName];
 
     if (customResponse) {
-      await this._send(command.channelName, `${userName}, ${customResponse}`);
-
-      return;
+      return customResponse;
     }
 
     const rangeBottom = 0;
     const rangeTop = 100;
     const integerTrue = true;
 
-    await this._send(
-      command.channelName,
-      `you are ${RandomProvider.getNumber(rangeBottom, rangeTop, integerTrue)}% frog today 🐸`,
-    );
+    return `${RandomProvider.getNumber(rangeBottom, rangeTop, integerTrue)}% frog today 🐸`;
   }
 
   private readonly _customResponses: Record<string, string> = {
-    [People.DOTANEK]: 'you are always and forever 200% frog 🐸',
-    [People.SYLVENE]: 'you are 150% frog (are you cheating?!) 🐸',
-    [People.TOLL]: 'sir you are a raven >:c',
+    [People.DOTANEK]: 'always and forever 200% frog 🐸',
+    [People.SYLVENE]: '150% frog (are you cheating?!) 🐸',
+    [People.TOLL]: 'a raven >:c',
   };
 }

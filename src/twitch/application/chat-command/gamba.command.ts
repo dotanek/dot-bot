@@ -18,6 +18,10 @@ const POINTS_ARG_ALL = 'all';
   aliases: ['gamble', '90percentofgamblersquitrightbeforetheyhititbig'],
 })
 export class GambaCommand extends ChatCommandHandlerBase {
+  protected _commandTree = {
+    handler: (command: ChatCommand) => this._handle(command),
+  };
+
   constructor(
     chatService: TwitchChatService,
     private readonly _userService: UserService,
@@ -26,7 +30,7 @@ export class GambaCommand extends ChatCommandHandlerBase {
     super(chatService);
   }
 
-  async executeLegacy(command: ChatCommand): Promise<void> {
+  private async _handle(command: ChatCommand): Promise<void> {
     const userId = command.messageCtx.userInfo.userId;
     const { userName, channelName } = command;
     const pointsArg = command.getArgument(0);

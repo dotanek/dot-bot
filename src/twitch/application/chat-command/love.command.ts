@@ -10,6 +10,10 @@ import { TwitchChatService } from '../service/twitch-chat-service';
 
 @ChatCommandHandler({ name: 'love' })
 export class LoveCommand extends ChatCommandHandlerBase {
+  protected _commandTree = {
+    handler: (command: ChatCommand) => this._handle(command),
+  };
+
   constructor(
     chatService: TwitchChatService,
     private readonly _assignmentRepository: LoveAssignmentRepository,
@@ -17,7 +21,7 @@ export class LoveCommand extends ChatCommandHandlerBase {
     super(chatService);
   }
 
-  async executeLegacy(command: ChatCommand): Promise<void> {
+  private async _handle(command: ChatCommand): Promise<void> {
     const userName = command.userName.toLowerCase();
     const targetName = command.getArgument(0)?.replace('@', '').toLowerCase();
 

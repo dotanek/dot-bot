@@ -9,6 +9,11 @@ import { UserService } from '../service/user.service';
 
 @ChatCommandHandler({ name: 'points', aliases: ['wealth', 'money'] })
 export class PointsCommand extends ChatCommandHandlerBase {
+  protected _commandTree = {
+    handler: (command: ChatCommand, remainingArgs: string[]) =>
+      this._handle(command, remainingArgs),
+  };
+
   constructor(
     chatService: TwitchChatService,
     private readonly _userService: UserService,
@@ -16,11 +21,14 @@ export class PointsCommand extends ChatCommandHandlerBase {
     super(chatService);
   }
 
-  async executeLegacy(command: ChatCommand): Promise<void> {
+  private async _handle(
+    command: ChatCommand,
+    remainingArgs: string[],
+  ): Promise<void> {
     const { userName, channelName } = command;
     const userId = command.messageCtx.userInfo.userId;
 
-    const targetArg = command.getArgument(0);
+    const targetArg = remainingArgs[0]?.replaceAll('@', '');
 
     if (targetArg) {
       await this._handleTarget(targetArg, userName, channelName);
