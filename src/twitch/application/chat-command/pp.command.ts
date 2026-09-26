@@ -20,6 +20,18 @@ enum SubCommand {
   aliases: ['penis', 'benis', 'shlong', 'dingdong'],
 })
 export class PPCommand extends ChatCommandHandlerBase {
+  protected _commandTree = {
+    handler: (command: ChatCommand) => this._handleShow(command),
+    children: {
+      add: {
+        handler: (command: ChatCommand) => this._handleAdd(command),
+      },
+      show: {
+        handler: (command: ChatCommand) => this._handleShow(command),
+      },
+    },
+  };
+
   constructor(
     chatService: TwitchChatService,
     private readonly _userService: UserService,
@@ -29,7 +41,7 @@ export class PPCommand extends ChatCommandHandlerBase {
     super(chatService);
   }
 
-  async executeLegacy(command: ChatCommand): Promise<void> {
+  private async _handle(command: ChatCommand): Promise<void> {
     const argumentStr = command.getArgument(0);
 
     if (argumentStr === SubCommand.ADD) {

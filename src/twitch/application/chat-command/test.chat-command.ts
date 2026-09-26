@@ -21,10 +21,6 @@ export class TestChatCommandHandler extends ChatCommandHandlerBase {
     },
   };
 
-  async executeLegacy(command: ChatCommand): Promise<void> {
-    await this._chatService.sendMessage(command.channelName, 'Hello world!');
-  }
-
   private async _handleHelloWorld(command: ChatCommand): Promise<void> {
     await this._send(command.channelName, 'Hello world!');
   }
