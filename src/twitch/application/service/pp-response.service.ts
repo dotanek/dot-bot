@@ -4,9 +4,11 @@ import { PPResponseAssignmentRepository } from '../repository/pp-response-assign
 import { ResponseNotFoundTwitchException } from '../exception/response-not-found.twitch-exception';
 import { RandomProvider } from '../../../common/random-provider';
 import { PpResponseAssignment } from '../entity/pp-response-assignment.entity';
+import { Injectable } from '@nestjs/common';
 
 export const PP_RESPONSE_SERVICE = 'pp-response-service';
 
+@Injectable()
 export class PPResponseService {
   constructor(
     private readonly _ppResponseRepository: PPResponseRepository,

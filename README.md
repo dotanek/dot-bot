@@ -29,3 +29,6 @@ Imagine writing tests
 ## License
 
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+
+## To do
+- Integrate with twitch api for username to userId lookup
