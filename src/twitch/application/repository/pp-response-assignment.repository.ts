@@ -13,7 +13,7 @@ export class PPResponseAssignmentRepository {
     return this._repository.find();
   }
 
-  findOne(userId: string): Promise<PpResponseAssignment | null> {
+  async findOne(userId: string): Promise<PpResponseAssignment | null> {
     return this._repository.findOneBy({ userId });
   }
 

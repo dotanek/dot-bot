@@ -51,7 +51,7 @@ export class LoveCommand extends ChatCommandHandlerBase {
 
     await this._assignmentRepository.save(assignment);
 
-    await this._chatService.sendMessage(
+    await this._send(
       command.channelName,
       `@${command.userName}, there is ${assignment.value}% love dotane1Heart between you and ${targetName}!`,
     );

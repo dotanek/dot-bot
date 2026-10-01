@@ -11,10 +11,6 @@ import { PPResponseService } from '../service/pp-response.service';
 import { TwitchChatService } from '../service/twitch-chat-service';
 import { UserService } from '../service/user.service';
 
-enum SubCommand {
-  ADD = 'add',
-}
-
 @ChatCommandHandler({
   name: 'pp',
   aliases: ['penis', 'benis', 'shlong', 'dingdong'],
@@ -41,40 +37,29 @@ export class PPCommand extends ChatCommandHandlerBase {
     super(chatService);
   }
 
-  private async _handle(command: ChatCommand): Promise<void> {
-    const argumentStr = command.getArgument(0);
-
-    if (argumentStr === SubCommand.ADD) {
-      await this._handleAdd(command);
-    } else {
-      await this._handleShow(command);
-    }
-  }
-
   private async _handleShow(command: ChatCommand): Promise<void> {
-    const targetName = command.getArgument(1);
+    const targetArg = command.getArgument(0)?.replaceAll('@', '');
 
-    if (targetName) {
-      await this._handleShowTarget(targetName, command);
+    if (targetArg && targetArg !== command.userName) {
+      await this._handleShowTarget(targetArg, command);
     } else {
       await this._handleShowSelf(command);
     }
   }
 
   private async _handleShowSelf(command: ChatCommand): Promise<void> {
-    let response = await this._ppResponseService.findAssigned(command.userId);
+    const userName = command.userName;
 
-    if (!response) {
-      response = await this._ppResponseService.assignRandom(command.userId);
-    }
+    const response = await this.findResponse(userName);
 
     let responseStr = `@${command.userName}, `;
 
     if (response) {
-      responseStr += response.content;
+      responseStr += `your pp ${response.content}`;
     } else {
       responseStr += 'I know nothing about your pp :c';
     }
+
     await this._send(command.channelName, responseStr);
   }
 
@@ -82,6 +67,20 @@ export class PPCommand extends ChatCommandHandlerBase {
     targetName: string,
     command: ChatCommand,
   ): Promise<void> {
+    const response = await this.findResponse(targetName);
+
+    let responseStr = `@${command.userName}, `;
+
+    if (response) {
+      responseStr += `${targetName}s pp ${response.content}`;
+    } else {
+      responseStr += `I know nothing about ${targetName}s pp :c`;
+    }
+
+    await this._send(command.channelName, responseStr);
+  }
+
+  private async findResponse(targetName: string): Promise<PPResponse | null> {
     const targetUser = await this._userService.findByName(targetName);
 
     if (!targetUser) {
@@ -94,18 +93,10 @@ export class PPCommand extends ChatCommandHandlerBase {
       response = await this._ppResponseService.assignRandom(targetUser.id);
     }
 
-    let responseStr = `@${command.userName}, `;
-
-    if (response) {
-      responseStr += `${targetName}s pp is blah blah blah`;
-    } else {
-      responseStr += `I know nothing about ${targetName} pp :c`;
-    }
-
-    await this._send(command.channelName, responseStr);
+    return response;
   }
 
-  async _handleAdd(command: ChatCommand): Promise<void> {
+  private async _handleAdd(command: ChatCommand): Promise<void> {
     const contentArgs = command.getArgumentsRange(1);
 
     if (contentArgs.length === 0) {

@@ -16,6 +16,6 @@ export class GuguCommand extends ChatCommandHandlerBase {
   }
 
   private async _handle(command: ChatCommand): Promise<void> {
-    await this._chatService.sendMessage(command.channelName, 'gaga');
+    await this._send(command.channelName, 'gaga');
   }
 }
