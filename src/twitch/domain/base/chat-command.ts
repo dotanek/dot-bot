@@ -75,11 +75,13 @@ export abstract class ChatCommandHandlerBase {
     let currentNode = this._commandTree;
 
     while (remainingArgs.length > 0 && currentNode.children) {
-      const nextNode = currentNode.children[remainingArgs[0]];
+      const nextNodeExists = Object.hasOwn(
+        currentNode.children,
+        remainingArgs[0],
+      );
 
-      if (nextNode) {
-        remainingArgs.shift();
-        currentNode = nextNode;
+      if (nextNodeExists) {
+        currentNode = currentNode.children[remainingArgs.shift()!];
       } else {
         break;
       }
