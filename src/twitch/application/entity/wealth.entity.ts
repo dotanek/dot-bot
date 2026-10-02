@@ -3,6 +3,7 @@ import { v4 } from 'uuid';
 import { TWITCH_SCHEMA } from './schema/twitch.schema';
 import { User } from './user.entity';
 import { InvalidArgumentException } from '../exception/invalid-argument.exception';
+import { BigIntTransformer } from '../../../common/transformer/bigint.transformer';
 
 const DEFAULT_VALUE = 0;
 
@@ -20,7 +21,10 @@ export class Wealth {
   @Column('uuid')
   userId: string;
 
-  @Column()
+  @Column({
+    type: 'bigint',
+    transformer: BigIntTransformer.create(),
+  })
   value: number;
 
   @OneToOne(() => User, (user) => user.wealth)
@@ -33,7 +37,7 @@ export class Wealth {
   increase(value: number): void {
     this._validatePositiveValue(value);
 
-    this.value += value;
+    this.value = this._addSafe(this.value, value);
   }
 
   decrease(value: number): void {
@@ -50,6 +54,17 @@ export class Wealth {
     if (value < 0) {
       throw new InvalidArgumentException('value is not a positive number');
     }
+  }
+
+  private _addSafe(valueA: number, valueB: number): number {
+    let result = BigInt(valueA) + BigInt(valueB);
+    const maxSafe = BigInt(Number.MAX_SAFE_INTEGER);
+
+    if (result > maxSafe) {
+      result = maxSafe;
+    }
+
+    return Number(result.toString());
   }
 
   public static create(userId: string): Wealth {

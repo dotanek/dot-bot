@@ -50,7 +50,7 @@ export class GambaCommand extends ChatCommandHandlerBase {
       return;
     }
 
-    const betPoints = this.getValue(pointsArg, user.getWealth());
+    const betPoints = Math.floor(this.getValue(pointsArg, user.getWealth()));
 
     const isWin = RandomProvider.getBoolean();
 
@@ -68,13 +68,20 @@ export class GambaCommand extends ChatCommandHandlerBase {
         isWin ? 'won!' : 'lost lmao gottem KEKW'
       } [${user.getWealth()} points]`,
     );
+
+    if (user.getWealth() === Number.MAX_SAFE_INTEGER) {
+      await this._send(
+        channelName,
+        `@${userName}, you just hit the maximum possible points (you cannot win more)`,
+      );
+    }
   }
 
   getValue(pointsArg: string, userPoints: number): number {
     const stringPoints = pointsArg.slice();
 
     if (pointsArg.toLowerCase() === POINTS_ARG_ALL) {
-      return userPoints;
+      return Math.floor(userPoints);
     }
 
     if (pointsArg.endsWith('%')) {
@@ -92,7 +99,7 @@ export class GambaCommand extends ChatCommandHandlerBase {
   }
 
   private _getPercent(valueStr: string, points: number): number {
-    const rangePercentBottom = 0;
+    const rangePercentBottom = 1;
     const rangePercentTop = 100;
     if (
       !new IsNumberRangeValidator(rangePercentBottom, rangePercentTop).check(
@@ -100,7 +107,7 @@ export class GambaCommand extends ChatCommandHandlerBase {
       )
     ) {
       throw new InvalidCommandArgumentException(
-        'not a valid percent',
+        'not a valid positive percent',
         valueStr,
       );
     }

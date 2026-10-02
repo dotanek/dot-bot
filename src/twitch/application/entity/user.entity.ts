@@ -7,13 +7,13 @@ import { v4 } from 'uuid';
 export class User {
   private constructor(
     id: string,
-    name: string,
     externalId: string,
+    name: string,
     wealth: Wealth,
   ) {
     this.id = id;
-    this.name = name;
     this.externalId = externalId;
+    this.name = name;
     this.wealth = wealth;
   }
 
@@ -50,6 +50,8 @@ export class User {
 
   static create(externalId: string, username: string): User {
     const id = v4();
+
+    console.error(externalId, username);
 
     return new User(id, externalId, username, Wealth.create(id));
   }
