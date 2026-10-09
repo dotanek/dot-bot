@@ -5,7 +5,7 @@ export class CreateUserAndWealthTables1708724126227 implements MigrationInterfac
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `CREATE TABLE "twitch"."wealth" ("id" uuid NOT NULL, "user_id" uuid NOT NULL, "value" integer NOT NULL, "user_id" uuid, CONSTRAINT "REL_0ab7b20a87c3f9f5ea4fa14339" UNIQUE ("user_id"), CONSTRAINT "PK_8b40b1efa87e8e6abb48c106668" PRIMARY KEY ("id"))`,
+      `CREATE TABLE "twitch"."wealth" ("id" uuid NOT NULL, "user_id" uuid NOT NULL, "value" integer NOT NULL, CONSTRAINT "REL_0ab7b20a87c3f9f5ea4fa14339" UNIQUE ("user_id"), CONSTRAINT "PK_8b40b1efa87e8e6abb48c106668" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
       `CREATE TABLE "twitch"."user" ("id" uuid NOT NULL, "external_id" character varying NOT NULL, CONSTRAINT "PK_cace4a159ff9f2512dd42373760" PRIMARY KEY ("id"))`,

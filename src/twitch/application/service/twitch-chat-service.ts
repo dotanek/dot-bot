@@ -1,18 +1,31 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ChatClient } from '@twurple/chat';
 import { TwitchAuthService } from './twitch-auth.service';
 
 @Injectable()
-export class TwitchChatService {
+export class TwitchChatService implements OnModuleInit {
+  private readonly _logger = new Logger(TwitchChatService.name);
+
   constructor(
     private readonly _chatClient: ChatClient,
-    private readonly _configService: ConfigService,
     private readonly _twitchAuthService: TwitchAuthService,
   ) {}
 
+  async onModuleInit(): Promise<void> {
+    if (await this._twitchAuthService.isAuthenticated()) {
+      this.connect();
+    } else {
+      this._logger.warn('Twitch unauthenticated - chat is not connected');
+    }
+  }
+
   async sendMessage(channelId: string, text: string): Promise<void> {
     await this._chatClient.say(channelId, text);
+  }
+
+  connect(): void {
+    this.chatClient.connect();
   }
 
   get chatClient() {
@@ -33,8 +46,6 @@ export class TwitchChatService {
       channels: [channel],
     });
 
-    chatClient.connect();
-
-    return new TwitchChatService(chatClient, configService, twitchAuthService);
+    return new TwitchChatService(chatClient, twitchAuthService);
   }
 }
