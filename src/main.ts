@@ -6,6 +6,8 @@ async function bootstrap() {
   try {
     const app = await NestFactory.create(AppModule);
 
+    app.setGlobalPrefix('api');
+
     await app.listen(process.env.PORT ?? 3000);
   } catch (exception: unknown) {
     Logger.error(exception);

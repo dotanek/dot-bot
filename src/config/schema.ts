@@ -6,6 +6,7 @@ export const databaseSchema = Joi.object({
   DATABASE__USER: Joi.string().required(),
   DATABASE__PASSWORD: Joi.string().required(),
   DATABASE__NAME: Joi.string().required(),
+  DATABASE__SSL: Joi.boolean().required(),
 });
 
 export const globalSchema = Joi.object({

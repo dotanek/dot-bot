@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TwitchException } from '../exception/twitch.exception';
 import { TwitchTokenRepository } from '../repository/twitch-token.repository';
@@ -10,12 +10,24 @@ import {
 } from '@twurple/auth';
 
 @Injectable()
-export class TwitchAuthService {
+export class TwitchAuthService implements OnModuleInit {
+  private readonly _logger = new Logger(TwitchAuthService.name);
+
   constructor(
     public readonly authProvider: RefreshingAuthProvider,
     private readonly _configService: ConfigService,
     private readonly _tokenRepository: TwitchTokenRepository,
   ) {}
+
+  async onModuleInit(): Promise<void> {
+    if (!(await this.isAuthenticated())) {
+      this._logger.warn('Missing auth token - twitch is not unauthenticated');
+    }
+  }
+
+  async isAuthenticated(): Promise<boolean> {
+    return (await this._tokenRepository.findOne()) != null;
+  }
 
   private async handleOnRefresh(
     userId: string,
@@ -77,7 +89,7 @@ export class TwitchAuthService {
       new Date(accessToken.obtainmentTimestamp),
     );
 
-    await this.authProvider.addUserForToken(accessToken);
+    await this.authProvider.addUserForToken(accessToken, ['chat']);
   }
 
   static async create(
@@ -112,11 +124,9 @@ export class TwitchAuthService {
 
     const token = await tokenRepository.findOne();
 
-    if (!token) {
-      throw new TwitchException('Missing auth token');
+    if (token) {
+      await authProvider.addUserForToken(token.toTwurpleToken(), ['chat']);
     }
-
-    await authProvider.addUserForToken(token.toTwurpleToken(), ['chat']);
 
     return new TwitchAuthService(authProvider, configService, tokenRepository);
   }
