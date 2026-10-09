@@ -31,8 +31,8 @@ export class TwitchController {
     try {
       await this._twitchAuthService.addManualToken(authCode);
       this._twitchChatService.connect();
-    } catch (error: unknown) {
-      this._logger.error('Failed to manually add token', error);
+    } catch (exception: unknown) {
+      this._logger.error('Failed to manually add token', exception);
     }
 
     return { message: 'Successfully authenticated, you can close the tab.' };
