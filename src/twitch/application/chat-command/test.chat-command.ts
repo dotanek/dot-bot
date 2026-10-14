@@ -14,9 +14,19 @@ export class TestChatCommandHandler extends ChatCommandHandlerBase {
     children: {
       hello: {
         handler: (command: ChatCommand) => this._handleHello(command),
+        children: {
+          hello: {
+            handler: (command: ChatCommand) => this._handleHelloHello(command),
+          },
+        },
       },
       world: {
         handler: (command: ChatCommand) => this._handleWorld(command),
+        children: {
+          world: {
+            handler: (command: ChatCommand) => this._handleWorldWorld(command),
+          },
+        },
       },
     },
   };
@@ -29,7 +39,15 @@ export class TestChatCommandHandler extends ChatCommandHandlerBase {
     await this._send(command.channelName, 'Hello!');
   }
 
+  private async _handleHelloHello(command: ChatCommand): Promise<void> {
+    await this._send(command.channelName, 'Hello x2!');
+  }
+
   private async _handleWorld(command: ChatCommand): Promise<void> {
     await this._send(command.channelName, 'World!');
+  }
+
+  private async _handleWorldWorld(command: ChatCommand): Promise<void> {
+    await this._send(command.channelName, 'World x2!');
   }
 }
