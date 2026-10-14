@@ -6,7 +6,7 @@ import { ChatCommandHandler } from '../../domain/decorator/chat-command-handler.
 
 @ChatCommandHandler({
   name: 'test',
-  aliases: ['hello', 'hello-world', 'hi', 'hi-test'],
+  aliases: ['hello', 'hello-world', 'hi'],
 })
 export class TestChatCommandHandler extends ChatCommandHandlerBase {
   protected _commandTree = {
