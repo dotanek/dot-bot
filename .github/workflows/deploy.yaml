@@ -2,8 +2,8 @@ name: Deploy
 
 on:
   workflow_dispatch:
-push:
-  branches: [feat/cicd-deploy]
+  push:
+    branches: [feat/cicd-deploy]
 
 jobs:
   deploy:
