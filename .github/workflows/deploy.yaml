@@ -1,5 +1,5 @@
 jobs:
-  test:
+  deploy:
     runs-on: node:24
     steps:
       - name: Checkout code
@@ -13,9 +13,12 @@ jobs:
       - name: Authorize with AWS ECR
         uses: aws-actions/amazon-ecr-login@v2
       - name: Build and push to AWS ECR
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: ${{ vars.AWS_REPOSITORY }}
+          IMAGE_TAG: ${{ github.sha }}
         run: | 
-          aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 523213418935.dkr.ecr.eu-central-1.amazonaws.com
-          docker build -t 523213418935.dkr.ecr.eu-central-1.amazonaws.com/dot-bot:dot-bot-image .
-          docker push 523213418935.dkr.ecr.eu-central-1.amazonaws.com/dot-bot:dot-bot-image
+          docker build -t $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG .
+          docker push $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG
 
       
