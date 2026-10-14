@@ -26,17 +26,17 @@ jobs:
       - name: Build and push to AWS ECR
         id: build-image
         env:
-          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          REPOSITORY: ${{ vars.AWS_REPOSITORY }}
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ${{ vars.AWS_ECR_REPOSITORY }}
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
-          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
       - name: Download task definition
         env:
-          TASK_DEFINITION_FAMILY: ${{ vars.TASK_DEFINITION_FAMILY }}
+          TASK_DEFINITION_FAMILY: ${{ vars.AWS_ECS_TASK_DEFINITION_FAMILY }}
         run: |
           aws ecs describe-task-definition --task-definition $TASK_DEFINITION_FAMILY --query taskDefinition > task-definition.json
 
@@ -52,6 +52,6 @@ jobs:
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         with:
           task-definition: ${{ steps.task-definition.outputs.task-definition }}
-          service: ${{ vars.SERVICE }}
-          cluster: ${{ vars.CLUSTER }}
+          service: ${{ vars.AWS_ECS_SERVICE }}
+          cluster: ${{ vars.AWS_ECS_CLUSTER }}
           wait-for-service-stability: true
