@@ -4,7 +4,7 @@ jobs:
     runs-on: node:24
     steps:
       - name: Checkout code
-        use: actions/checkout@v4
+        uses: actions/checkout@v4
       - name: Configure AWS
         uses: aws-actions/configure-aws-credentials@v6.3
         with:
