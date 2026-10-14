@@ -1,23 +1,30 @@
+name: Deploy
+
 on: workflow_dispatch
+
 jobs:
   deploy:
-    runs-on: node:24
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
       - name: Configure AWS
-        uses: aws-actions/configure-aws-credentials@v6.3
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ vars.AWS_REGION }}
+
       - name: Authorize with AWS ECR
+        id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
+
       - name: Build and push to AWS ECR
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: ${{ vars.AWS_REPOSITORY }}
           IMAGE_TAG: ${{ github.sha }}
-        run: | 
-          docker build -t $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG .
-          docker push $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG
+        run: |
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
