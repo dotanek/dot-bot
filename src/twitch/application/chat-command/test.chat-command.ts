@@ -6,7 +6,7 @@ import { ChatCommandHandler } from '../../domain/decorator/chat-command-handler.
 
 @ChatCommandHandler({
   name: 'test',
-  aliases: ['hello', 'hello-world', 'hi'],
+  aliases: ['hello', 'hello-world', 'hi', 'hi-test'],
 })
 export class TestChatCommandHandler extends ChatCommandHandlerBase {
   protected _commandTree = {
@@ -44,10 +44,10 @@ export class TestChatCommandHandler extends ChatCommandHandlerBase {
   }
 
   private async _handleWorld(command: ChatCommand): Promise<void> {
-    await this._send(command.channelName, 'World x2!');
+    await this._send(command.channelName, 'World!');
   }
 
   private async _handleWorldWorld(command: ChatCommand): Promise<void> {
-    await this._send(command.channelName, 'World!');
+    await this._send(command.channelName, 'World x2!');
   }
 }

@@ -6,7 +6,7 @@ on:
     branches: [feat/cicd-deploy]
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
