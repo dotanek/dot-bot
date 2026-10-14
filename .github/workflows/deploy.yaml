@@ -52,6 +52,6 @@ jobs:
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         with:
           task-definition: ${{ steps.task-definition.outputs.task-definition }}
-          service: ${{ vars.CLUSTER }}
-          cluster: ${{ vars.SERVICE }}
+          service: ${{ vars.SERVICE }}
+          cluster: ${{ vars.CLUSTER }}
           wait-for-service-stability: true
