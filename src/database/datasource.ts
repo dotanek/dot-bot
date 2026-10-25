@@ -11,8 +11,6 @@ if (result.error) {
   throw result.error;
 }
 
-console.error(`${__dirname}\\..\\**\\*.ts`);
-
 export default new DataSource({
   type: 'postgres',
   host: process.env['DATABASE__HOST'],
@@ -23,5 +21,6 @@ export default new DataSource({
   entities: [`${__dirname}\\..\\**\\*.entity.ts`],
   migrations: [`${__dirname}\\migration\\*.ts`],
   namingStrategy: new SnakeNamingStrategy(),
+  migrationsRun: true,
   synchronize: false,
 });
