@@ -26,7 +26,7 @@ import { join } from 'path';
             rejectUnauthorized: true,
           },
           autoLoadEntities: true,
-          migrations: [`${__dirname}\\migration\\*{.ts,.js}`],
+          migrations: [`${__dirname}/migration/*{.ts,.js}`],
           namingStrategy: new SnakeNamingStrategy(),
           synchronize: false,
           migrationsRun: true,

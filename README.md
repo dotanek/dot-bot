@@ -1,7 +1,7 @@
-## Getting started
+## Getting started (Locally)
 
 ```bash
-$ npm install
+npm install
 ```
 
 Set up environment variables by renaming `.env.example` file to `.env` and modifying its values.
@@ -15,30 +15,95 @@ Run the application
 
 ```bash
 # development
-$ npm run start
+npm run start
 
 # watch mode
-$ npm run start:dev
+npm run start:dev
 ```
+
+## Infrastructure Setup (Terraform)
+
+Requires [Terraform](https://developer.hashicorp.com/terraform/install) and the [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html). Run the commands from the Terraform directory.
+
+1. Rename `example.tfvars` to `terraform.tfvars` and fill in its values
+2. Authenticate the AWS CLI using your access key:
+   ```bash
+   aws configure
+   ```
+3. Initialize terraform
+   ```bash
+   terraform init
+   ```
+4. Preview changes
+   ```bash
+   terraform plan
+   ```
+5. Apply changes
+   ```bash
+   terraform apply
+   ```
+
+6. Replace placeholder values in parameter store
+
+| Parameter | Env variable | Description |
+|---|---|---|
+| `dot-bot_port` | `PORT` | Port the app listens on |
+| `dot-bot_twitch-channel` | `TWITCH__CHANNEL` | Twitch channel the bot joins |
+| `dot-bot_twitch-oauth-client-id` | `TWITCH__OAUTH_CLIENT_ID` | Twitch OAuth client ID |
+| `dot-bot_twitch-oauth-client-secret` | `TWITCH__OAUTH_CLIENT_SECRET` | Twitch OAuth client secret |
+| `dot-bot_twitch-oauth-redirect-uri` | `TWITCH__OAUTH_REDIRECT_URI` | Twitch OAuth redirect URI |
+| `dot-bot_twitch-prefix` | `TWITCH__PREFIX` | Chat command prefix |
+
+```bash
+aws ssm put-parameter --name "<parameter>" --value "<value>" --overwrite --region eu-central-1
+```
+
+#### Initial deploy
+
+The ECS service can't start tasks until an image tagged `initial` exists in ECR, you can manually deploy that image:
+
+Run these from root directory of the project.
+
+1. Set the registry and image:
+```bash
+   REGISTRY=<account-id>.dkr.ecr.<region>.amazonaws.com
+   IMAGE=$REGISTRY/<ecr-repository>:initial
+```
+2. Log in to ECR:
+```bash
+   aws ecr get-login-password --region <region> | docker login --username AWS --password-stdin $REGISTRY
+```
+3. Build and push the image:
+```bash
+   docker build --platform linux/amd64 -t $IMAGE .
+   docker push $IMAGE
+```
+4. Force a new deployment:
+```bash
+   aws ecs update-service --cluster <cluster> --service <service> --force-new-deployment
+```
+
 
 ## Deployment Setup (GitHub Actions)
 
-The `Deploy` workflow builds the Docker image, pushes it to ECR, and deploys it to ECS. It needs the variables and secrets to be configured in GitHub before it can run.
+The `Deploy` workflow builds the Docker image, pushes it to ECR tagged with the commit SHA, and deploys it to ECS.
 
 ### Requirements
 
-- The ECR repository, ECS cluster, and ECS service must already exist.
+- The infrastructure must already exist (see [Infrastructure Setup](#infrastructure-setup-terraform)).
 - The IAM user needs permissions to push to ECR, describe and register ECS task definitions, update the ECS service, and `iam:PassRole` for the task and execution roles. Preferably use the minimum possible permissions for this.
 - The container name in the task definition must be `Main`.
 
-### Secrets
+### GitHub requirements
+
+#### Secrets
 
 | Name | Description |
 |---|---|
 | `AWS_ACCESS_KEY_ID` | Access key ID of the IAM user used for deployment |
 | `AWS_ACCESS_KEY_SECRET` | Secret access key for that IAM user |
 
-### Variables
+#### Variables
 
 | Name | Description | Example |
 |---|---|---|
@@ -59,7 +124,7 @@ Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
 ## To do
 
 - Integrate with twitch api for username to userId lookup
-- Add terraform files and deploy roles with minimum privileges
+- Add deploy roles with minimum privileges to Terraform
 
 ## Known bugs
 
