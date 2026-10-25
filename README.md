@@ -25,6 +25,8 @@ npm run start:dev
 
 Requires [Terraform](https://developer.hashicorp.com/terraform/install) and the [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html). Run the commands from the Terraform directory.
 
+Also requires an AWS IAM user that has sufficient permissions to make all the changes.
+
 1. Rename `example.tfvars` to `terraform.tfvars` and fill in its values
 2. Authenticate the AWS CLI using your access key:
    ```bash
@@ -57,6 +59,14 @@ Requires [Terraform](https://developer.hashicorp.com/terraform/install) and the 
 ```bash
 aws ssm put-parameter --name "<parameter>" --value "<value>" --overwrite --region eu-central-1
 ```
+
+You can change all of those parameters at once with the local script
+
+```bash
+bash ./scripts/change-ssm-params.sh
+```
+
+
 
 #### Initial deploy
 
@@ -125,6 +135,7 @@ Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
 
 - Integrate with twitch api for username to userId lookup
 - Add deploy roles with minimum privileges to Terraform
+- Add role & user creation script for running Terraform
 
 ## Known bugs
 

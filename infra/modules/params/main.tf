@@ -58,13 +58,13 @@ resource "aws_ssm_parameter" "manual" {
 
 output "secrets" {
   value = {
-    app_db_host                = aws_ssm_parameter.database_host.arn
-    app_db_name                = aws_ssm_parameter.database_name.arn
-    app_db_password            = aws_ssm_parameter.database_password.arn
-    app_db_port                = aws_ssm_parameter.database_port.arn
-    app_db_ssl                 = aws_ssm_parameter.database_ssl.arn
-    app_db_user                = aws_ssm_parameter.database_user.arn
-    app_port                   = aws_ssm_parameter.manual["port"].arn
+    db_host                    = aws_ssm_parameter.database_host.arn
+    db_name                    = aws_ssm_parameter.database_name.arn
+    db_password                = aws_ssm_parameter.database_password.arn
+    db_port                    = aws_ssm_parameter.database_port.arn
+    db_ssl                     = aws_ssm_parameter.database_ssl.arn
+    db_user                    = aws_ssm_parameter.database_user.arn
+    port                       = aws_ssm_parameter.manual["port"].arn
     twitch_channel             = aws_ssm_parameter.manual["twitch-channel"].arn
     twitch_oauth_client_id     = aws_ssm_parameter.manual["twitch-oauth-client-id"].arn
     twitch_oauth_client_secret = aws_ssm_parameter.manual["twitch-oauth-client-secret"].arn

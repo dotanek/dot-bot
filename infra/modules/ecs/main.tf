@@ -50,36 +50,18 @@ resource "aws_ecs_task_definition" "app_task" {
       }
 
       secrets = [
-        { name = "DATABASE__HOST", valueFrom = var.secrets.app_db_host },
-        { name = "DATABASE__NAME", valueFrom = var.secrets.app_db_name },
-        { name = "DATABASE__PASSWORD", valueFrom = var.secrets.app_db_password },
-        { name = "DATABASE__PORT", valueFrom = var.secrets.app_db_port },
-        { name = "DATABASE__SSL", valueFrom = var.secrets.app_db_ssl },
-        { name = "DATABASE__USER", valueFrom = var.secrets.app_db_user },
-        {
-          "name" : "PORT",
-          "valueFrom" : "arn:aws:ssm:eu-central-1:523213418935:parameter/dot-bot_port"
-        },
-        {
-          "name" : "TWITCH__CHANNEL",
-          "valueFrom" : "arn:aws:ssm:eu-central-1:523213418935:parameter/dot-bot_twitch-channel"
-        },
-        {
-          "name" : "TWITCH__OAUTH_CLIENT_ID",
-          "valueFrom" : "arn:aws:ssm:eu-central-1:523213418935:parameter/dot-bot_twitch-oauth-client-id"
-        },
-        {
-          "name" : "TWITCH__OAUTH_CLIENT_SECRET",
-          "valueFrom" : "arn:aws:ssm:eu-central-1:523213418935:parameter/dot-bot_twitch-oauth-client-secret"
-        },
-        {
-          "name" : "TWITCH__OAUTH_REDIRECT_URI",
-          "valueFrom" : "arn:aws:ssm:eu-central-1:523213418935:parameter/dot-bot_twitch-oauth-redirect-uri"
-        },
-        {
-          "name" : "TWITCH__PREFIX",
-          "valueFrom" : "arn:aws:ssm:eu-central-1:523213418935:parameter/dot-bot_twitch-prefix"
-        }
+        { name = "DATABASE__HOST", valueFrom = var.secrets.db_host },
+        { name = "DATABASE__NAME", valueFrom = var.secrets.db_name },
+        { name = "DATABASE__PASSWORD", valueFrom = var.secrets.db_password },
+        { name = "DATABASE__PORT", valueFrom = var.secrets.db_port },
+        { name = "DATABASE__SSL", valueFrom = var.secrets.db_ssl },
+        { name = "DATABASE__USER", valueFrom = var.secrets.db_user },
+        { name = "PORT", valueFrom : var.secrets.port },
+        { name = "TWITCH__CHANNEL", valueFrom : var.secrets.twitch_channel },
+        { name = "TWITCH__OAUTH_CLIENT_ID", valueFrom : var.secrets.twitch_oauth_client_id },
+        { name = "TWITCH__OAUTH_CLIENT_SECRET", valueFrom : var.secrets.twitch_oauth_client_secret },
+        { name = "TWITCH__OAUTH_REDIRECT_URI", valueFrom : var.secrets.twitch_oauth_redirect_uri },
+        { name = "TWITCH__PREFIX", valueFrom : var.secrets.twitch_prefix }
       ]
 
       essential = true

@@ -48,17 +48,17 @@ variable "subnet_ids" {
 variable "secrets" {
   description = "SSM parameter ARNs for the app's secrets"
   type = object({
-    app_db_host     = string
-    app_db_name     = string
-    app_db_password = string
-    app_db_port     = string
-    app_db_ssl      = string
-    app_db_user     = string
-    # app_port                   = string
-    # twitch_channel             = string
-    # twitch_oauth_client_id     = string
-    # twitch_oauth_client_secret = string
-    # twitch_oauth_redirect_uri  = string
-    # twitch_prefix              = string
+    db_host                    = string
+    db_name                    = string
+    db_password                = string
+    db_port                    = string
+    db_ssl                     = string
+    db_user                    = string
+    port                       = string
+    twitch_channel             = string
+    twitch_oauth_client_id     = string
+    twitch_oauth_client_secret = string
+    twitch_oauth_redirect_uri  = string
+    twitch_prefix              = string
   })
 }

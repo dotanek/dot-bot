@@ -3,7 +3,7 @@ resource "aws_ecr_repository" "ecr_app_repository" {
   image_tag_mutability = "IMMUTABLE_WITH_EXCLUSION"
 
   image_tag_mutability_exclusion_filter {
-    filter      = "latest"
+    filter      = "initial"
     filter_type = "WILDCARD"
   }
 
