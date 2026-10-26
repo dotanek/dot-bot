@@ -51,8 +51,6 @@ export class User {
   static create(externalId: string, username: string): User {
     const id = v4();
 
-    console.error(externalId, username);
-
     return new User(id, externalId, username, Wealth.create(id));
   }
 }

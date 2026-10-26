@@ -31,7 +31,6 @@ export class GambaCommand extends ChatCommandHandlerBase {
   }
 
   private async _handle(command: ChatCommand): Promise<void> {
-    const userId = command.messageCtx.userInfo.userId;
     const { userName, channelName } = command;
     const pointsArg = command.getArgument(0);
 
@@ -39,7 +38,7 @@ export class GambaCommand extends ChatCommandHandlerBase {
       throw new InvalidCommandArgumentException('argument is missing');
     }
 
-    const user = await this._userService.findOrCreate(userId, userName);
+    const user = await this._userService.findOrCreate(userName);
 
     if (user.getWealth() <= 0) {
       await this._send(

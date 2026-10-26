@@ -81,7 +81,7 @@ export class PPCommand extends ChatCommandHandlerBase {
   }
 
   private async findResponse(targetName: string): Promise<PPResponse | null> {
-    const targetUser = await this._userService.findByName(targetName);
+    const targetUser = await this._userService.findOrCreate(targetName);
 
     if (!targetUser) {
       throw new UserNotFoundTwitchException(targetName);

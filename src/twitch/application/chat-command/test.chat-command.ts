@@ -3,12 +3,17 @@ import {
   ChatCommandHandlerBase,
 } from '../../domain/base/chat-command';
 import { ChatCommandHandler } from '../../domain/decorator/chat-command-handler.decorator';
+import { TwitchChatService } from '../service/twitch-chat-service';
 
 @ChatCommandHandler({
   name: 'test',
   aliases: ['hello', 'hello-world', 'hi'],
 })
 export class TestChatCommandHandler extends ChatCommandHandlerBase {
+  constructor(chatService: TwitchChatService) {
+    super(chatService);
+  }
+
   protected _commandTree = {
     handler: (command: ChatCommand) => this._handleHelloWorld(command),
     children: {
