@@ -33,6 +33,7 @@ import { PPResponseRepository } from './application/repository/pp-response.repos
 import { UserRepository } from './application/repository/user.repository';
 import { UserService } from './application/service/user.service';
 import { PPResponseService } from './application/service/pp-response.service';
+import { TwitchApiService } from './application/service/twitch-api.service';
 
 const CHAT_COMMAND_REPOSITORIES = [
   LoveAssignmentRepository,
@@ -87,6 +88,12 @@ const CHAT_COMMAND_HANDLERS = [
         twitchAuthService: TwitchAuthService,
       ) => TwitchChatService.create(configService, twitchAuthService),
       inject: [ConfigService, TwitchAuthService],
+    },
+    {
+      provide: TwitchApiService,
+      useFactory: (twitchAuthService: TwitchAuthService) =>
+        TwitchApiService.create(twitchAuthService),
+      inject: [TwitchAuthService],
     },
     ChatCommandRegistry,
     TwitchChatListener,

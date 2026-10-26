@@ -52,7 +52,7 @@ export class PointsCommand extends ChatCommandHandlerBase {
     userName: string,
     channelName: string,
   ): Promise<void> {
-    const user = await this._userService.findOrCreate(userId, userName);
+    const user = await this._userService.findOrCreate(userName);
 
     await this._send(
       channelName,
@@ -65,7 +65,7 @@ export class PointsCommand extends ChatCommandHandlerBase {
     userName: string,
     channelName: string,
   ): Promise<void> {
-    const targetUser = await this._userService.findByName(targetName);
+    const targetUser = await this._userService.findOrCreate(targetName);
 
     let responseStr: string;
 
@@ -105,7 +105,7 @@ export class PointsCommand extends ChatCommandHandlerBase {
       );
     }
 
-    const targetUser = await this._userService.findByName(targetArg);
+    const targetUser = await this._userService.findOrCreate(targetArg);
 
     if (!targetUser) {
       throw new UserNotFoundTwitchException(targetArg);
